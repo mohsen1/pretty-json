@@ -14,6 +14,95 @@ class PrettyJSON extends HTMLElement {
     return ["expand", "key"];
   }
 
+  static styles = `/* css */
+    :host {
+      --key-color: #c00;
+      --arrow-color: #737373;
+      --brace-color: #0030f0;
+      --bracket-color: #0030f0;
+      --string-color: #090;
+      --number-color: #00f;
+      --undefined-color: #666;
+      --null-color: #666;
+      --boolean-color: #d23c91;
+      --comma-color: #666;
+      --ellipsis-color: #666;
+    }
+    button {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 1rem;
+      vertical-align: text-bottom;
+    }
+    .container {
+      font-family: monospace;
+      font-size: 1rem;
+    }
+    .key {
+      color: var(--key-color);
+      margin-right: 0.5rem;
+      padding: 0;
+    }
+    .key .arrow {
+      width: 1rem;
+      height: 0.75rem;
+      margin-left: -1.25rem;
+      padding-right: 0.25rem;
+      vertical-align: baseline;
+    }
+    .arrow .triangle {
+      fill: var(--arrow-color);
+    }
+    .comma {
+      color: var(--comma-color);
+    }
+    .brace {
+      color: var(--brace-color);
+    }
+    .string {
+      color: var(--string-color);
+    }
+    .number,
+    .bigint {
+      color: var(--number-color);
+    }
+    .undefined {
+      color: var(--undefined-color);
+    }
+    .null {
+      color: var(--null-color);
+    }
+    .boolean {
+      color: var(--boolean-color);
+    }
+
+    .ellipsis {
+      width: 1rem;
+      padding: 0;
+      color: var(--ellipsis-color);
+    }
+    .ellipsis::after {
+      content: "…";
+    }
+    .triangle {
+      fill: black;
+      stroke: black;
+      stroke-width: 0;
+    }
+    .row {
+      padding-left: 2rem;
+    }
+    .row .row {
+      display: block;
+    }
+    .row > div,
+    .row > span {
+      display: inline-block;
+    }
+  `;
+
   constructor() {
     super();
 
@@ -202,10 +291,13 @@ class PrettyJSON extends HTMLElement {
       this.#createChild(this.#input, this.#expandAttributeValue)
     );
 
-    // Hack for styles for now
+    if (this.shadowRoot.querySelector("[data-pretty-json]")) {
+      return;
+    }
+
     const styles = document.createElement("style");
-    styles.textContent =
-      document.getElementById("pretty-json-styles")!.textContent;
+    styles.setAttribute("data-pretty-json", "");
+    styles.textContent = PrettyJSON.styles;
     this.shadowRoot.appendChild(styles);
   }
 
