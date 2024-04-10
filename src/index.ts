@@ -143,14 +143,14 @@ class PrettyJSON extends HTMLElement {
   #createChild(
     input: Record<any, any> | any[] | Primitive | AnyFunction,
     expand: number,
-    key?: string
+    key?: string,
   ) {
     if (this.#isPrimitiveValue(input)) {
       const container = this.#createContainer();
       container.appendChild(this.#createPrimitiveValueElement(input));
       return container;
     }
-    return this.#createObjectOrArray(input, expand, key);
+    return this.#createObjectOrArray(input);
   }
 
   #isPrimitiveValue(input: any): input is Primitive {
@@ -251,7 +251,7 @@ class PrettyJSON extends HTMLElement {
     svg.setAttribute("class", "arrow");
     const polygon = document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "polygon"
+      "polygon",
     );
 
     polygon.setAttribute("class", "triangle");
@@ -288,7 +288,7 @@ class PrettyJSON extends HTMLElement {
     this.#assignIsExpanded();
     this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(
-      this.#createChild(this.#input, this.#expandAttributeValue)
+      this.#createChild(this.#input, this.#expandAttributeValue),
     );
 
     if (this.shadowRoot.querySelector("[data-pretty-json]")) {

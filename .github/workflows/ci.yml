@@ -1,0 +1,39 @@
+# Github Action for CI
+# checks prettier is ran
+# tsc check
+# parcel build (yarn build)
+
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run Prettier
+        run: yarn prettier --check src/ tests/
+
+      - name: Run TypeScript check
+        run: yarn tsc
+
+      - name: Build with Parcel
+        run: yarn build

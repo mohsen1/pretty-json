@@ -80,7 +80,7 @@
 &lt;/pretty-json&gt;</pre
     >
     <p>Your JSON will be rendered as following:</p>
-    <pretty-json>
+    <pretty-json data-testid="first-example">
       { "hello": "world", "value": 42, "enabled": true, "extra": null, "nested":
       { "key": "value" } }
     </pretty-json>
@@ -121,7 +121,7 @@
     "value": 42,
     "enabled": true,
     "extra": null,
-    "nested": { "key": "value", "object": { "key": "value" }, "array": [1, 2, 3] },
+    "complex": { "key": "value", "obj": { "key": "value" }, "array": [1, 2, 3] },
     "array": [1, 2, 3],
     "deeply": {
         "nested": {
@@ -138,11 +138,11 @@
     }
 }&lt;/pretty-json&gt;</pre
     >
-    <pretty-json>
-      { "hello": "world", "value": 42, "enabled": true, "extra": null, "nested":
-      { "key": "value", "object": { "key": "value" }, "array": [1, 2, 3] },
-      "array": [1, 2, 3], "deeply": { "nested": { "object": { "with": { "lots":
-      { "of": { "keys": "values" } } } } } } }
+    <pretty-json data-testid="complex-example">
+      { "hello": "world", "value": 42, "enabled": true, "extra": null,
+      "complex": { "key": "value", "obj": { "key": "value" }, "array": [1, 2, 3]
+      }, "array": [1, 2, 3], "deeply": { "nested": { "object": { "with": {
+      "lots": { "of": { "keys": "values" } } } } } } }
     </pretty-json>
 
     <h2>Primitive Values</h2>
