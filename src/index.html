@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pretty JSON Custom Element Demo</title>
+    <script defer src="./index.ts"></script>
+    <style>
+      :root {
+        --code-bg-color: #ebebeb;
+      }
+      body {
+        max-width: 80ch;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      code {
+        background-color: var(--code-bg-color);
+        padding: 0.1rem 0.25rem;
+      }
+      pre {
+        background-color: var(--code-bg-color);
+        padding: 0.5rem;
+        margin: 0;
+      }
+    </style>
+    <style id="pretty-json-styles">
+      /* pretty-json styles */
+      :root {
+        --key-color: #c00;
+        --brace-color: #0030f0;
+        --bracket-color: #0030f0;
+        --string-color: #090;
+        --number-color: #00f;
+        --undefined-color: #666;
+        --null-color: #666;
+        --boolean-color: #666;
+        --ellipsis-color: #666;
+      }
+      .container {
+        font-family: monospace;
+        font-size: 1rem;
+      }
+      .key {
+        color: var(--key-color);
+      }
+      .brace {
+        color: var(--brace-color);
+      }
+      .string {
+        color: var(--string-color);
+      }
+      .number,
+      .bigint {
+        color: var(--number-color);
+      }
+      .undefined {
+        color: var(--undefined-color);
+      }
+      .null {
+        color: var(--null-color);
+      }
+      .boolean {
+        color: var(--boolean-color);
+      }
+
+      .ellipsis {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        width: 1rem;
+        padding: 0;
+        vertical-align: text-bottom;
+        font-size: 1rem;
+        color: var(--ellipsis-color);
+      }
+      .ellipsis::after {
+        content: "…";
+      }
+      .arrow {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        vertical-align: text-bottom;
+        font-size: 1rem;
+        padding: 0.125rem;
+      }
+      .arrow.expanded::after {
+        content: "▼";
+      }
+      .arrow::after {
+        content: "►";
+        display: inline-block;
+      }
+      .row {
+        padding-left: 1rem;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Pretty JSON Custom Element <code>&lt;pretty-json&gt;</code></h1>
+    <p>
+      <code>&lt;pretty-json&gt;</code> allows you to render JSON objects in HTML
+      documents with human readable formatting and expandable interaction for
+      browsing deep JSON structures
+    </p>
+    <h2>Usage</h2>
+    <p>
+      Include <code>pretty-json.js</code> in your HTML page and use the HTML
+      custom element as the following
+    </p>
+    <pre>&lt;pretty-json&gt;{ "hello": "world" }&lt;/pretty-json&gt;</pre>
+    <p>Your JSON will be rendered as following:</p>
+    <pretty-json>{"hello": "world"}</pretty-json>
+  </body>
+</html>

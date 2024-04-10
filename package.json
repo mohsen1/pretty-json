@@ -1,0 +1,17 @@
+{
+  "name": "pretty-json-custom-element",
+  "version": "1.0.0",
+  "description": "Pretty JSON HTML Custom Element ",
+  "main": "dist/index.js",
+  "author": "Mohsen Azimi",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel src/index.html",
+    "build": "prettier --write src/**/* && parcel build src/index.ts"
+  },
+  "devDependencies": {
+    "parcel": "^2.12.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.4"
+  }
+}
