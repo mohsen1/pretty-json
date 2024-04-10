@@ -7,7 +7,7 @@
     <script defer src="./index.ts"></script>
     <style>
       :root {
-        --code-bg-color: #ebebeb;
+        --code-bg-color: #f8f8f8;
       }
       body {
         max-width: 80ch;
@@ -22,8 +22,9 @@
       }
       pre {
         background-color: var(--code-bg-color);
-        padding: 0.5rem;
+        padding: 1rem 0.5rem;
         margin: 0;
+        text-wrap: pretty;
       }
       pretty-json {
         display: block;
@@ -156,7 +157,17 @@
       Include <code>pretty-json.js</code> in your HTML page and use the HTML
       custom element as the following
     </p>
-    <pre>&lt;pretty-json&gt;{ "hello": "world" }&lt;/pretty-json&gt;</pre>
+    <pre>
+&lt;pretty-json&gt;
+{ 
+    "hello": "world",
+    "value": 42,
+    "enabled": true,
+    "extra": null,
+    "nested": { "key": "value" }
+}
+&lt;/pretty-json&gt;</pre
+    >
     <p>Your JSON will be rendered as following:</p>
     <pretty-json>
       { "hello": "world", "value": 42, "enabled": true, "extra": null, "nested":

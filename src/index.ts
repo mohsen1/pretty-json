@@ -8,6 +8,7 @@ class PrettyJSONError extends Error {
 class PrettyJSON extends HTMLElement {
   declare shadowRoot: ShadowRoot;
   #input: any;
+  #isExpanded!: boolean;
 
   static get observedAttributes() {
     return ["expand", "key"];
@@ -24,8 +25,22 @@ class PrettyJSON extends HTMLElement {
       throw new PrettyJSONError((jsonParseError as Error).message);
     }
 
+    this.#assignIsExpanded();
+
     // Attach a shadow root to the element.
     this.attachShadow({ mode: "open" });
+  }
+
+  /**
+   * Read from the expand attribute and set the isExpanded property
+   */
+  #assignIsExpanded() {
+    const expandAttribute = this.getAttribute("expand");
+    if (expandAttribute === null) {
+      this.#isExpanded = true;
+    } else {
+      this.#isExpanded = Number.parseInt(expandAttribute) === 1;
+    }
   }
 
   get #expandValue() {
@@ -37,17 +52,13 @@ class PrettyJSON extends HTMLElement {
   }
 
   #toggle() {
-    // // is this expaned?
-    // if (this.#expandValue === 0) {
-    //   this.setAttribute("expand", String(1));
-    // } else {
-    //   this.setAttribute("expand", String(0));
-    // }
-    // // this.shadowRoot.replaceChild(
-    // //   this.#createChild(this.#input, this.#expandValue),
-    // //   this.shadowRoot.querySelector(".container")!
-    // // );
-    // this.setAttribute("expand", String(this.#expandValue ? 0 : 1));
+    const expandValue = this.#expandValue;
+    const newExpandAttribute = this.#isExpanded
+      ? expandValue + 1
+      : Math.max(expandValue - 1, 0);
+    this.setAttribute("expand", String(newExpandAttribute));
+    this.#assignIsExpanded();
+    this.#render();
   }
 
   #createChild(
@@ -98,6 +109,7 @@ class PrettyJSON extends HTMLElement {
         withArrow: true,
         expanded: expand > 0,
       });
+      keyElement.addEventListener("click", this.#toggle.bind(this));
       container.appendChild(keyElement);
     }
 
@@ -189,15 +201,9 @@ class PrettyJSON extends HTMLElement {
     return keyElement;
   }
 
-  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-    //   if (name === "expand") {
-    //     if (oldValue !== newValue) {
-    //       this.#toggle();
-    //     }
-    //   }
-  }
-
-  connectedCallback() {
+  #render() {
+    this.#assignIsExpanded();
+    this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(
       this.#createChild(this.#input, this.#expandValue)
     );
@@ -207,6 +213,14 @@ class PrettyJSON extends HTMLElement {
     styles.textContent =
       document.getElementById("pretty-json-styles")!.textContent;
     this.shadowRoot.appendChild(styles);
+  }
+
+  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+    this.#render();
+  }
+
+  connectedCallback() {
+    this.#render();
   }
 }
 
