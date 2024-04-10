@@ -198,6 +198,42 @@
     >
     <pretty-json expand="0">{"hello": {"world": "!"}}</pretty-json>
 
+    <h2>Complex Example</h2>
+    <p>
+      You can render complex JSON objects with nested objects and arrays. The
+      <code>&lt;pretty-json&gt;</code> element will render them with proper
+      indentation and formatting
+    </p>
+    <pre>
+&lt;pretty-json&gt;{
+    "hello": "world",
+    "value": 42,
+    "enabled": true,
+    "extra": null,
+    "nested": { "key": "value", "object": { "key": "value" }, "array": [1, 2, 3] },
+    "array": [1, 2, 3],
+    "deeply": {
+        "nested": {
+            "object": {
+                "with": {
+                    "lots": {
+                        "of": {
+                            "keys": "values"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}&lt;/pretty-json&gt;</pre
+    >
+    <pretty-json>
+      { "hello": "world", "value": 42, "enabled": true, "extra": null, "nested":
+      { "key": "value", "object": { "key": "value" }, "array": [1, 2, 3] },
+      "array": [1, 2, 3], "deeply": { "nested": { "object": { "with": { "lots":
+      { "of": { "keys": "values" } } } } } } }
+    </pretty-json>
+
     <h2>Primitive Values</h2>
     <p>
       Since values like strings, numbers, booleans and null are valid JSON

@@ -16,16 +16,6 @@ class PrettyJSON extends HTMLElement {
 
   constructor() {
     super();
-    if (!this.textContent) {
-      throw new PrettyJSONError("No text content was found");
-    }
-    try {
-      this.#input = JSON.parse(this.textContent);
-    } catch (jsonParseError) {
-      throw new PrettyJSONError((jsonParseError as Error).message);
-    }
-
-    this.#assignIsExpanded();
 
     // Attach a shadow root to the element.
     this.attachShadow({ mode: "open" });
@@ -43,7 +33,7 @@ class PrettyJSON extends HTMLElement {
     }
   }
 
-  get #expandValue() {
+  get #expandAttributeValue() {
     const expandAttribute = this.getAttribute("expand");
     if (expandAttribute === null) {
       return 1;
@@ -52,10 +42,10 @@ class PrettyJSON extends HTMLElement {
   }
 
   #toggle() {
-    const expandValue = this.#expandValue;
+    const expandValue = this.#expandAttributeValue;
     const newExpandAttribute = this.#isExpanded
-      ? expandValue + 1
-      : Math.max(expandValue - 1, 0);
+      ? Math.max(expandValue - 1, 0)
+      : expandValue + 1;
     this.setAttribute("expand", String(newExpandAttribute));
     this.#assignIsExpanded();
     this.#render();
@@ -92,12 +82,10 @@ class PrettyJSON extends HTMLElement {
     return container;
   }
 
-  #createObjectOrArray(
-    object: Record<any, any> | any[],
-    expand: number,
-    objectKeyName?: string
-  ) {
+  #createObjectOrArray(object: Record<any, any> | any[]) {
     const isArray = Array.isArray(object);
+    const objectKeyName = this.getAttribute("key");
+    const expand = this.#expandAttributeValue;
 
     const container = this.#createContainer();
     container.classList.add(isArray ? "array" : "object");
@@ -153,7 +141,13 @@ class PrettyJSON extends HTMLElement {
       }
 
       // for objects and arrays we make a "container row"
-      container.appendChild(this.#createObjectOrArray(value, expand - 1, key));
+
+      //   container.appendChild(this.#createObjectOrArray(value, expand - 1, key));
+      const prettyJsonElement = document.createElement("pretty-json");
+      prettyJsonElement.textContent = JSON.stringify(value);
+      prettyJsonElement.setAttribute("expand", String(expand - 1));
+      prettyJsonElement.setAttribute("key", key);
+      container.appendChild(prettyJsonElement);
     });
 
     container.appendChild(closingBrace);
@@ -205,7 +199,7 @@ class PrettyJSON extends HTMLElement {
     this.#assignIsExpanded();
     this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(
-      this.#createChild(this.#input, this.#expandValue)
+      this.#createChild(this.#input, this.#expandAttributeValue)
     );
 
     // Hack for styles for now
@@ -220,6 +214,11 @@ class PrettyJSON extends HTMLElement {
   }
 
   connectedCallback() {
+    try {
+      this.#input = JSON.parse(this.textContent!);
+    } catch (jsonParseError) {
+      throw new PrettyJSONError((jsonParseError as Error).message);
+    }
     this.#render();
   }
 }
