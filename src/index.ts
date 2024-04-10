@@ -8,7 +8,6 @@ class PrettyJSONError extends Error {
 class PrettyJSON extends HTMLElement {
   declare shadowRoot: ShadowRoot;
   #input: any;
-  #isExpanded: boolean = false;
 
   static get observedAttributes() {
     return ["expand", "key"];
@@ -29,38 +28,46 @@ class PrettyJSON extends HTMLElement {
     this.attachShadow({ mode: "open" });
   }
 
-  #toggle() {
-    this.#isExpanded = !this.#isExpanded;
-    this.shadowRoot.replaceChild(
-      this.#createChild(this.#input),
-      this.shadowRoot.querySelector(".container")!
-    );
-  }
-
-  #createChild(input: Record<any, any> | any[] | Primitive | AnyFunction) {
-    switch (typeof input) {
-      case "object": {
-        if (Array.isArray(input)) {
-          return this.#createArray(input);
-        } else if (input === null) {
-          return this.#createPrimitive(null);
-        } else {
-          return this.#createObject(input);
-        }
-      }
-      case "string":
-      case "number":
-      case "bigint":
-      case "boolean":
-      case "symbol":
-      case "undefined":
-        return this.#createPrimitive(input);
-      default:
-        throw new Error(`Unknown type of object: ${typeof input}`);
+  get #expandValue() {
+    const expandAttribute = this.getAttribute("expand");
+    if (expandAttribute === null) {
+      return 1;
     }
+    return Number.parseInt(expandAttribute);
   }
 
-  #createPrimitive(input: Primitive) {
+  #toggle() {
+    // // is this expaned?
+    // if (this.#expandValue === 0) {
+    //   this.setAttribute("expand", String(1));
+    // } else {
+    //   this.setAttribute("expand", String(0));
+    // }
+    // // this.shadowRoot.replaceChild(
+    // //   this.#createChild(this.#input, this.#expandValue),
+    // //   this.shadowRoot.querySelector(".container")!
+    // // );
+    // this.setAttribute("expand", String(this.#expandValue ? 0 : 1));
+  }
+
+  #createChild(
+    input: Record<any, any> | any[] | Primitive | AnyFunction,
+    expand: number,
+    key?: string
+  ) {
+    if (this.#isPrimitiveValue(input)) {
+      const container = this.#createContainer();
+      container.appendChild(this.#createPrimitiveValueElement(input));
+      return container;
+    }
+    return this.#createObjectOrArray(input, expand, key);
+  }
+
+  #isPrimitiveValue(input: any): input is Primitive {
+    return typeof input !== "object" || input === null;
+  }
+
+  #createPrimitiveValueElement(input: Primitive) {
     const container = document.createElement("div");
     const type = typeof input === "object" ? "null" : typeof input;
     container.className = `primitive value ${type}`;
@@ -68,25 +75,42 @@ class PrettyJSON extends HTMLElement {
     return container;
   }
 
-  #createObject(object: Record<any, any>) {
+  #createContainer() {
     const container = document.createElement("div");
-    container.className = "container object";
-    const arrow = document.createElement("button");
-    arrow.className = "arrow";
-    if (this.#isExpanded) {
-      arrow.classList.add("expanded");
+    container.className = "container";
+    return container;
+  }
+
+  #createObjectOrArray(
+    object: Record<any, any> | any[],
+    expand: number,
+    objectKeyName?: string
+  ) {
+    const isArray = Array.isArray(object);
+
+    const container = this.#createContainer();
+    container.classList.add(isArray ? "array" : "object");
+
+    if (objectKeyName) {
+      // if objectKeyName is provided, then it is a row
+      container.classList.add("row");
+      const keyElement = this.#createKeyElement(objectKeyName, {
+        withArrow: true,
+        expanded: expand > 0,
+      });
+      container.appendChild(keyElement);
     }
-    arrow.addEventListener("click", this.#toggle.bind(this));
-    container.appendChild(arrow);
+
     const openingBrace = document.createElement("span");
     openingBrace.className = "open brace";
-    openingBrace.textContent = "{";
-    const closingBrace = document.createElement("span");
-    closingBrace.className = "close brace";
-    closingBrace.textContent = "}";
+    openingBrace.textContent = isArray ? "[" : "{";
     container.appendChild(openingBrace);
 
-    if (!this.#isExpanded) {
+    const closingBrace = document.createElement("span");
+    closingBrace.className = "close brace";
+    closingBrace.textContent = isArray ? "]" : "}";
+
+    if (expand === 0) {
       const ellipsis = document.createElement("button");
       ellipsis.className = "ellipsis";
       container.appendChild(ellipsis);
@@ -95,45 +119,88 @@ class PrettyJSON extends HTMLElement {
       return container;
     }
 
-    Object.entries(object).forEach(([key, value]) => {
-      const rowContainer = document.createElement("div");
-      rowContainer.className = "row";
-      const keyElement = document.createElement("span");
-      keyElement.className = "key";
-      const keyText = document.createElement("span");
-      keyText.textContent = JSON.stringify(key);
-      keyElement.appendChild(keyText);
-      const colon = document.createElement("span");
-      colon.className = "colon";
-      colon.textContent = ":";
-      keyElement.appendChild(colon);
-      rowContainer.appendChild(keyElement);
-      rowContainer.appendChild(this.#createChild(value));
-      container.appendChild(rowContainer);
+    Object.entries(object).forEach(([key, value], index) => {
+      // for primitives we make a row here
+      if (this.#isPrimitiveValue(value)) {
+        const rowContainer = document.createElement("div");
+        rowContainer.className = "row";
+        if (!isArray) {
+          const keyElement = this.#createKeyElement(key);
+          rowContainer.appendChild(keyElement);
+        }
+        rowContainer.appendChild(this.#createPrimitiveValueElement(value));
+        container.appendChild(rowContainer);
+        const isLast = index === Object.keys(object).length - 1;
+        if (!isLast) {
+          const comma = document.createElement("span");
+          comma.className = "comma";
+          comma.textContent = ",";
+          rowContainer.appendChild(comma);
+        }
+        return;
+      }
+
+      // for objects and arrays we make a "container row"
+      container.appendChild(this.#createObjectOrArray(value, expand - 1, key));
     });
 
     container.appendChild(closingBrace);
     return container;
   }
 
-  #createArray(array: any[]) {
-    const container = document.createElement("div");
+  #createArrowElement({ expanded = false } = {}) {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("width", "100");
+    svg.setAttribute("height", "100");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    svg.setAttribute("class", "arrow");
+    const polygon = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "polygon"
+    );
 
-    // TODO
-    return container;
+    polygon.setAttribute("class", "triangle");
+    polygon.setAttribute("points", "0,0 100,50 0,100");
+
+    if (expanded) {
+      polygon.setAttribute("transform", "rotate(90 50 50)");
+    }
+
+    svg.appendChild(polygon);
+
+    return svg;
+  }
+
+  #createKeyElement(key: string, { withArrow = false, expanded = false } = {}) {
+    const keyElement = document.createElement(withArrow ? "button" : "span");
+    keyElement.className = "key";
+    if (withArrow) {
+      const arrow = this.#createArrowElement({ expanded });
+      keyElement.appendChild(arrow);
+    }
+    const keyName = document.createElement("span");
+    keyName.className = "key-name";
+    keyName.textContent = JSON.stringify(key);
+    keyElement.appendChild(keyName);
+    const colon = document.createElement("span");
+    colon.className = "colon";
+    colon.textContent = ":";
+    keyElement.appendChild(colon);
+    return keyElement;
   }
 
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-    if (name === "expand") {
-      if (oldValue !== newValue) {
-        this.#toggle();
-      }
-    }
+    //   if (name === "expand") {
+    //     if (oldValue !== newValue) {
+    //       this.#toggle();
+    //     }
+    //   }
   }
 
   connectedCallback() {
-    this.#isExpanded = this.getAttribute("expand") !== "false";
-    this.shadowRoot.appendChild(this.#createChild(this.#input));
+    this.shadowRoot.appendChild(
+      this.#createChild(this.#input, this.#expandValue)
+    );
 
     // Hack for styles for now
     const styles = document.createElement("style");

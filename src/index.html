@@ -13,6 +13,8 @@
         max-width: 80ch;
         margin-left: auto;
         margin-right: auto;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
       }
       code {
         background-color: var(--code-bg-color);
@@ -23,19 +25,33 @@
         padding: 0.5rem;
         margin: 0;
       }
+      pretty-json {
+        display: block;
+        margin: 1rem 0;
+      }
     </style>
     <style id="pretty-json-styles">
       /* pretty-json styles */
       :root {
         --key-color: #c00;
+        --arrow-color: #737373;
         --brace-color: #0030f0;
         --bracket-color: #0030f0;
         --string-color: #090;
         --number-color: #00f;
         --undefined-color: #666;
         --null-color: #666;
-        --boolean-color: #666;
+        --boolean-color: #d23c91;
+        --comma-color: #666;
         --ellipsis-color: #666;
+      }
+      button {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 1rem;
+        vertical-align: text-bottom;
       }
       .container {
         font-family: monospace;
@@ -43,6 +59,21 @@
       }
       .key {
         color: var(--key-color);
+        margin-right: 0.5rem;
+        padding: 0;
+      }
+      .key .arrow {
+        width: 1rem;
+        height: 0.75rem;
+        margin-left: -1.25rem;
+        padding-right: 0.25rem;
+        vertical-align: baseline;
+      }
+      .arrow .triangle {
+        fill: var(--arrow-color);
+      }
+      .comma {
+        color: var(--comma-color);
       }
       .brace {
         color: var(--brace-color);
@@ -65,38 +96,27 @@
       }
 
       .ellipsis {
-        border: none;
-        background: transparent;
-        cursor: pointer;
         width: 1rem;
         padding: 0;
-        vertical-align: text-bottom;
-        font-size: 1rem;
         color: var(--ellipsis-color);
       }
       .ellipsis::after {
         content: "…";
       }
-      .arrow {
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        vertical-align: text-bottom;
-        font-size: 1rem;
-        padding: 0.125rem;
-      }
-      .arrow.expanded::after {
-        content: "▼";
-      }
-      .arrow::after {
-        content: "►";
-        display: inline-block;
+      .triangle {
+        fill: black;
+        stroke: black;
+        stroke-width: 0;
       }
       .row {
-        padding-left: 1rem;
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 0.5rem;
+        padding-left: 2rem;
+      }
+      .row .row {
+        display: block;
+      }
+      .row > div,
+      .row > span {
+        display: inline-block;
       }
     </style>
   </head>
@@ -105,8 +125,32 @@
     <p>
       <code>&lt;pretty-json&gt;</code> allows you to render JSON objects in HTML
       documents with human readable formatting and expandable interaction for
-      browsing deep JSON structures
+      browsing deep JSON structures.
     </p>
+    <h2>Features</h2>
+
+    <ul>
+      <li>
+        It's outputs is a valid JSON string and can be copied and pasted into a
+        JSON file.
+      </li>
+      <li>
+        HTML Custom Element without any dependencies. Works in any modern
+        browser.
+      </li>
+      <li>
+        No need to install any dependencies or build tools. Just drop the script
+        in your HTML and start using it.
+      </li>
+      <li>Allows a high level of customization using CSS variables.</li>
+      <li>
+        Display large JSON objects with expandable and collapsible sections.
+      </li>
+      <li>
+        Supports truncating very large strings and arrays with an ellipsis.
+      </li>
+    </ul>
+
     <h2>Usage</h2>
     <p>
       Include <code>pretty-json.js</code> in your HTML page and use the HTML
@@ -114,6 +158,60 @@
     </p>
     <pre>&lt;pretty-json&gt;{ "hello": "world" }&lt;/pretty-json&gt;</pre>
     <p>Your JSON will be rendered as following:</p>
-    <pretty-json>{"hello": "world"}</pretty-json>
+    <pretty-json>
+      { "hello": "world", "value": 42, "enabled": true, "extra": null, "nested":
+      { "key": "value" } }
+    </pretty-json>
+    <h2>Attributes</h2>
+    <p>
+      You can customize the rendering of the JSON object by setting the
+      following attributes on the <code>&lt;pretty-json&gt;</code> element
+    </p>
+    <h3><code>expand</code></h3>
+    <p>
+      By default the JSON object is rendered expanded up to 1 level deep. You
+      can set the <code>expand</code> attribute to a number to expand the JSON
+      object up to that level deep
+    </p>
+    <pre>
+&lt;pretty-json expand="2"&gt;{ "hello": { "world": "!" } }&lt;/pretty-json&gt;</pre
+    >
+    <pretty-json expand="2">{"hello": {"world": "!"}}</pretty-json>
+    <h4>Collapsed by default</h4>
+    <p>
+      You can set the <code>expand</code> attribute to <code>0</code> to render
+      the JSON object collapsed by default
+    </p>
+    <pre>
+&lt;pretty-json expand="0"&gt;{ "hello": { "world": "!" } }&lt;/pretty-json&gt;</pre
+    >
+    <pretty-json expand="0">{"hello": {"world": "!"}}</pretty-json>
+
+    <h2>Primitive Values</h2>
+    <p>
+      Since values like strings, numbers, booleans and null are valid JSON
+      values, they are rendered as such
+    </p>
+    <h3>Strings</h3>
+    <pre>
+&lt;pretty-json&gt;"this is an example string"&lt;/pretty-json&gt;</pre
+    >
+    <pretty-json>"this is an example string"</pretty-json>
+    <h3>Numbers</h3>
+    <pre>&lt;pretty-json&gt;42&lt;/pretty-json&gt;</pre>
+    <pretty-json>42</pretty-json>
+    <h3>Booleans</h3>
+    <pre>&lt;pretty-json&gt;true&lt;/pretty-json&gt;</pre>
+    <pretty-json>true</pretty-json>
+    <h3>Null</h3>
+    <pre>&lt;pretty-json&gt;null&lt;/pretty-json&gt;</pre>
+    <pretty-json>null</pretty-json>
+    <h2>Arrays</h2>
+    <p>
+      Arrays are rendered with <code>[</code> and <code>]</code> brackets and
+      each item is rendered on a new line
+    </p>
+    <pre>&lt;pretty-json&gt;[1, 2, 3]&lt;/pretty-json&gt;</pre>
+    <pretty-json>[1, 2, 3]</pretty-json>
   </body>
 </html>
