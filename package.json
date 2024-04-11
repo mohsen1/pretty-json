@@ -6,7 +6,7 @@
   "author": "Mohsen Azimi",
   "license": "MIT",
   "scripts": {
-    "start": "parcel src/index.html",
+    "start": "PARCEL_WORKER_BACKEND=process PARCEL_WORKERS=0 parcel src/index.html",
     "build": "prettier --write src/ tests/ && parcel build src/index.ts",
     "test": "playwright test"
   },
