@@ -31,7 +31,8 @@ export default defineConfig({
     trace: "on-first-retry",
   },
 
-  snapshotPathTemplate: "{testDir}/__screenshots__/{testFilePath}/{arg}{ext}",
+  snapshotPathTemplate:
+    "{testDir}/__screenshots__/{testFilePath}/{testName}-{projectName}-{arg}{ext}",
 
   /* Configure projects for major browsers */
   projects: [
