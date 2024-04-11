@@ -13,6 +13,12 @@
 - Display large JSON objects with expandable and collapsible sections
 - Supports truncating very large strings and arrays with an ellipsis
 
+## To-do List
+
+- [ ] Support clicking on strings that are links
+- [ ] Support truncating very large strings
+- [ ] Support grouping very large arrays
+
 ## Usage
 
 Include [`pretty-json.js`](https://github.com/mohsen1/pretty-json/blob/main/src/index.js) in your HTML page and use the HTML custom element as follows:

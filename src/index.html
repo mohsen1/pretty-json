@@ -20,6 +20,9 @@
         background-color: var(--code-bg-color);
         padding: 0.1rem 0.25rem;
       }
+      details summary {
+        cursor: pointer;
+      }
       pre {
         background-color: var(--code-bg-color);
         padding: 1rem 0.5rem;
@@ -115,7 +118,9 @@
       <code>&lt;pretty-json&gt;</code> element will render them with proper
       indentation and formatting
     </p>
-    <pre>
+    <details>
+      <summary><code>View HTML source</code></summary>
+      <pre>
 &lt;pretty-json&gt;{
     "hello": "world",
     "value": 42,
@@ -137,7 +142,8 @@
         }
     }
 }&lt;/pretty-json&gt;</pre
-    >
+      >
+    </details>
     <pretty-json data-testid="complex-example">
       { "hello": "world", "value": 42, "enabled": true, "extra": null,
       "complex": { "key": "value", "obj": { "key": "value" }, "array": [1, 2, 3]
