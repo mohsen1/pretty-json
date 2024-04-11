@@ -11,8 +11,12 @@
   "scripts": {
     "start": "rm -rf .parcel-cache && parcel src/index.html",
     "prettier": "prettier --write .",
-    "test": "playwright test"
+    "test": "rm -rf .parcel-cache && playwright test"
   },
+  "prettierignore": [
+    "dist/",
+    ".parcel-cache/"
+  ],
   "devDependencies": {
     "@playwright/test": "^1.43.0",
     "@types/node": "^20.12.7",
