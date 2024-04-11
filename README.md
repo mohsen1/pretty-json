@@ -1,5 +1,7 @@
 # Pretty JSON HTML Custom Element
 
+> Development in progress. Not ready for use.
+
 `<pretty-json>` is an HTML custom element that allows you to render JSON objects in HTML documents with human-readable formatting and expandable interaction for browsing deep JSON structures.
 
 ## Features
@@ -13,7 +15,7 @@
 
 ## Usage
 
-Include `pretty-json.js` in your HTML page and use the HTML custom element as follows:
+Include [`pretty-json.js`](https://github.com/mohsen1/pretty-json/blob/main/src/index.js) in your HTML page and use the HTML custom element as follows:
 
 ```html
 <pretty-json> { "hello": "world" } </pretty-json>

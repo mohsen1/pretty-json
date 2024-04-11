@@ -20,7 +20,7 @@ test("First example", async ({ page }) => {
     "first-example-nested.png",
     {
       threshold: 0.1,
-    }
+    },
   );
 });
 
@@ -39,7 +39,7 @@ test("Complex example", async ({ page }) => {
       `complex-example-${text}.png`,
       {
         threshold: 0.1,
-      }
+      },
     );
   }
 
@@ -52,7 +52,7 @@ test("Complex example", async ({ page }) => {
     "complex-example-complex.png",
     {
       threshold: 0.1,
-    }
+    },
   );
 
   for (const text of keys.reverse()) {
@@ -66,7 +66,7 @@ test("Complex example", async ({ page }) => {
       `complex-example-${text}.png`,
       {
         threshold: 0.1,
-      }
+      },
     );
   }
 });

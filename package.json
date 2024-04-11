@@ -5,8 +5,11 @@
   "main": "dist/index.js",
   "author": "Mohsen Azimi",
   "license": "MIT",
+  "files": [
+    "src/index.js"
+  ],
   "scripts": {
-    "start": "PARCEL_WORKER_BACKEND=process PARCEL_WORKERS=0 parcel src/index.html",
+    "start": "rm -rf .parcel-cache && parcel src/index.html",
     "build": "prettier --write src/ tests/ && parcel build src/index.ts",
     "test": "playwright test"
   },

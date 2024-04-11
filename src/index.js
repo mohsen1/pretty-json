@@ -1,14 +1,30 @@
-type Primitive = string | number | null | undefined | bigint | boolean | symbol;
-type AnyFunction = (...args: any[]) => any;
+// @ts-check
+/**
+ * @typedef {string | number | null | undefined | bigint | boolean | symbol} Primitive
+ * @typedef {(...args: any[]) => any} AnyFunction
+ */
 
 class PrettyJSONError extends Error {
-  name = "PrettyJSONError";
+  /**
+   *
+   * @param {string} message
+   */
+  constructor(message) {
+    super(message);
+    this.name = "PrettyJSONError";
+  }
 }
 
 class PrettyJSON extends HTMLElement {
-  declare shadowRoot: ShadowRoot;
-  #input: any;
-  #isExpanded!: boolean;
+  /**
+   * @type {any}
+   */
+  #input;
+
+  /**
+   * @type {boolean}
+   */
+  #isExpanded;
 
   static get observedAttributes() {
     return ["expand", "key"];
@@ -106,7 +122,8 @@ class PrettyJSON extends HTMLElement {
   constructor() {
     super();
 
-    // Attach a shadow root to the element.
+    this.#isExpanded = false;
+    this.#assignIsExpanded();
     this.attachShadow({ mode: "open" });
   }
 
@@ -140,11 +157,13 @@ class PrettyJSON extends HTMLElement {
     this.#render();
   }
 
-  #createChild(
-    input: Record<any, any> | any[] | Primitive | AnyFunction,
-    expand: number,
-    key?: string,
-  ) {
+  /**
+   * @param {Record<any, any> | any[] | Primitive | AnyFunction} input
+   * @param {number} expand
+   * @param {string} [key]
+   * @returns {HTMLElement}
+   */
+  #createChild(input, expand, key) {
     if (this.#isPrimitiveValue(input)) {
       const container = this.#createContainer();
       container.appendChild(this.#createPrimitiveValueElement(input));
@@ -153,11 +172,19 @@ class PrettyJSON extends HTMLElement {
     return this.#createObjectOrArray(input);
   }
 
-  #isPrimitiveValue(input: any): input is Primitive {
+  /**
+   * @param {any} input
+   * @returns {input is Primitive}
+   */
+  #isPrimitiveValue(input) {
     return typeof input !== "object" || input === null;
   }
 
-  #createPrimitiveValueElement(input: Primitive) {
+  /**
+   * @param {Primitive} input
+   * @returns {HTMLElement}
+   */
+  #createPrimitiveValueElement(input) {
     const container = document.createElement("div");
     const type = typeof input === "object" ? "null" : typeof input;
     container.className = `primitive value ${type}`;
@@ -165,13 +192,20 @@ class PrettyJSON extends HTMLElement {
     return container;
   }
 
+  /**
+   * @returns {HTMLElement}
+   */
   #createContainer() {
     const container = document.createElement("div");
     container.className = "container";
     return container;
   }
 
-  #createObjectOrArray(object: Record<any, any> | any[]) {
+  /**
+   * @param {Record<any, any> | any[]} object
+   * @returns {HTMLElement}
+   */
+  #createObjectOrArray(object) {
     const isArray = Array.isArray(object);
     const objectKeyName = this.getAttribute("key");
     const expand = this.#expandAttributeValue;
@@ -230,8 +264,6 @@ class PrettyJSON extends HTMLElement {
       }
 
       // for objects and arrays we make a "container row"
-
-      //   container.appendChild(this.#createObjectOrArray(value, expand - 1, key));
       const prettyJsonElement = document.createElement("pretty-json");
       prettyJsonElement.textContent = JSON.stringify(value);
       prettyJsonElement.setAttribute("expand", String(expand - 1));
@@ -243,6 +275,10 @@ class PrettyJSON extends HTMLElement {
     return container;
   }
 
+  /**
+   * @param {{ expanded?: boolean }} [options]
+   * @returns {SVGElement}
+   */
   #createArrowElement({ expanded = false } = {}) {
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("width", "100");
@@ -266,7 +302,12 @@ class PrettyJSON extends HTMLElement {
     return svg;
   }
 
-  #createKeyElement(key: string, { withArrow = false, expanded = false } = {}) {
+  /**
+   * @param {string} key
+   * @param {{ withArrow?: boolean, expanded?: boolean }} [options]
+   * @returns {HTMLElement}
+   */
+  #createKeyElement(key, { withArrow = false, expanded = false } = {}) {
     const keyElement = document.createElement(withArrow ? "button" : "span");
     keyElement.className = "key";
     if (withArrow) {
@@ -286,6 +327,9 @@ class PrettyJSON extends HTMLElement {
 
   #render() {
     this.#assignIsExpanded();
+    if (!this.shadowRoot) {
+      throw new PrettyJSONError("Shadow root not available");
+    }
     this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(
       this.#createChild(this.#input, this.#expandAttributeValue),
@@ -301,15 +345,22 @@ class PrettyJSON extends HTMLElement {
     this.shadowRoot.appendChild(styles);
   }
 
-  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+  /**
+   * Handle when attributes change
+   * @param {string} _name
+   * @param {string} _oldValue
+   * @param {string} _newValue
+   */
+  attributeChangedCallback(_name, _oldValue, _newValue) {
     this.#render();
   }
 
   connectedCallback() {
     try {
-      this.#input = JSON.parse(this.textContent!);
+      this.#input = JSON.parse(this.textContent ?? "");
     } catch (jsonParseError) {
-      throw new PrettyJSONError((jsonParseError as Error).message);
+      const message = `Error parsing JSON: ${jsonParseError instanceof Error ? jsonParseError.message : "Unknown error"}`;
+      throw new PrettyJSONError(message);
     }
     this.#render();
   }
