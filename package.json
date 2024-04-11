@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "start": "rm -rf .parcel-cache && parcel src/index.html",
-    "build": "prettier --write src/ tests/ && parcel build src/index.ts",
+    "prettier": "prettier --write .",
     "test": "playwright test"
   },
   "devDependencies": {

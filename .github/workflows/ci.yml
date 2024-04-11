@@ -34,6 +34,3 @@ jobs:
 
       - name: Run TypeScript check
         run: yarn tsc
-
-      - name: Build with Parcel
-        run: yarn build
