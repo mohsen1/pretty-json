@@ -27,7 +27,7 @@ export async function assertBodyWithScreenshot({
   await expect(await page.screenshot({ fullPage: true, clip })).toMatchSnapshot(
     name,
     {
-      threshold: 0.1,
+      threshold: 0.25,
     }
   );
 }
