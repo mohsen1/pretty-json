@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { assertBodyWithScreenshot } from "./utils";
 
 test.describe("Interaction", () => {
   test("Deep object", async ({ page }) => {
@@ -38,25 +39,20 @@ test.describe("Interaction", () => {
       await complexExample.scrollIntoViewIfNeeded();
 
       // ensure each level is expanded correctly
-      await expect(await page.screenshot()).toMatchSnapshot(
-        `complex-example-${text}.png`,
-        {
-          threshold: 0.1,
-        }
-      );
+      await assertBodyWithScreenshot({
+        page,
+        name: `complex-example-${text}.png`,
+      });
     }
 
     const complexExample = page.getByTestId("complex-example");
     await complexExample.scrollIntoViewIfNeeded();
     await complexExample.getByText("complex").click();
 
-    // Ensure the final state is correct
-    await expect(await page.screenshot()).toMatchSnapshot(
-      "complex-example-complex.png",
-      {
-        threshold: 0.1,
-      }
-    );
+    await assertBodyWithScreenshot({
+      page,
+      name: "complex-example.png",
+    });
 
     // close the complex object deeply
     for (const text of keys.reverse()) {
@@ -66,12 +62,10 @@ test.describe("Interaction", () => {
       await complexExample.scrollIntoViewIfNeeded();
 
       // ensure each level is collapsed correctly
-      await expect(await page.screenshot()).toMatchSnapshot(
-        `complex-example-${text}.png`,
-        {
-          threshold: 0.1,
-        }
-      );
+      await assertBodyWithScreenshot({
+        page,
+        name: `complex-example-${text}-collapsed.png`,
+      });
     }
   });
 
@@ -102,22 +96,18 @@ test.describe("Interaction", () => {
     await variousExample.scrollIntoViewIfNeeded();
 
     // Ensure the final state is correct
-    await expect(await page.screenshot()).toMatchSnapshot(
-      "various-example.png",
-      {
-        threshold: 0.1,
-      }
-    );
+    await assertBodyWithScreenshot({
+      page,
+      name: "various-example.png",
+    });
 
     // open the array inside the object
     await variousExample.getByText("array").click();
     await variousExample.scrollIntoViewIfNeeded();
     // Ensure the final state is correct
-    await expect(await page.screenshot()).toMatchSnapshot(
-      "various-example.png",
-      {
-        threshold: 0.1,
-      }
-    );
+    await assertBodyWithScreenshot({
+      page,
+      name: "various-example-array.png",
+    });
   });
 });

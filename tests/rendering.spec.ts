@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { assertBodyWithScreenshot } from "./utils";
 
 const TEST_CASES = [
   // primitive values
@@ -62,27 +63,9 @@ test.describe.serial("Rendering", () => {
         document.body.appendChild(prettyJson);
       }, testCase);
 
-      const body = await page.getByTestId("body");
-      const boundingBox = await body.boundingBox();
-      if (!boundingBox) {
-        throw new Error("Bounding box not found");
-      }
-
-      /** Bounding box padding */
-      const padding = 20;
-
-      // Take a screenshot of only the body element
-      const clip = {
-        x: boundingBox.x - padding,
-        y: boundingBox.y - padding,
-        width: boundingBox.width + padding * 2,
-        height: boundingBox.height + padding * 2,
-      };
-
-      await expect(
-        await page.screenshot({ fullPage: true, clip })
-      ).toMatchSnapshot(`test-case-${testCaseIndex}.png`, {
-        threshold: 0.1,
+      await assertBodyWithScreenshot({
+        page,
+        name: `test-case-${testCaseIndex}.png`,
       });
 
       await page.evaluate(() => {
