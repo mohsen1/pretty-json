@@ -25,3 +25,9 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+      - name: Update README with HTML report link
+        if: always()
+        run: |
+          echo "## Playwright Test Report" >> $GITHUB_STEP_SUMMARY
+          echo "Download the HTML report artifact and open the index.html file to view the test results." >> $GITHUB_STEP_SUMMARY
+          echo "Artifact URL: \`https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\`" >> $GITHUB_STEP_SUMMARY
