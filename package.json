@@ -2,7 +2,7 @@
   "name": "pretty-json-custom-element",
   "version": "1.0.0",
   "description": "Pretty JSON HTML Custom Element ",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "author": "Mohsen Azimi",
   "license": "MIT",
   "files": [
@@ -11,7 +11,8 @@
   "scripts": {
     "start": "rm -rf .parcel-cache && parcel src/index.html",
     "prettier": "prettier --write .",
-    "test": "rm -rf .parcel-cache && playwright test"
+    "test": "playwright test",
+    "test-in-docker": "docker build -t playwright-docker .; docker run -v $(pwd)/tests/screenshots:/home/tests/screenshots -it playwright-docker:latest"
   },
   "prettierignore": [
     "dist/",

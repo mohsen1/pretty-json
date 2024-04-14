@@ -1,3 +1,11 @@
 {
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "**/.git": true,
+    ".parcel-cache": true,
+    "dist": true,
+    "node_modules": true,
+    "playwright-report": true,
+    "test-results": true
+  }
 }

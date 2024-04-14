@@ -122,21 +122,8 @@ class PrettyJSON extends HTMLElement {
   constructor() {
     super();
 
-    this.#isExpanded = false;
-    this.#assignIsExpanded();
+    this.#isExpanded = true;
     this.attachShadow({ mode: "open" });
-  }
-
-  /**
-   * Read from the expand attribute and set the isExpanded property
-   */
-  #assignIsExpanded() {
-    const expandAttribute = this.getAttribute("expand");
-    if (expandAttribute === null) {
-      this.#isExpanded = true;
-    } else {
-      this.#isExpanded = Number.parseInt(expandAttribute) === 1;
-    }
   }
 
   get #expandAttributeValue() {
@@ -144,16 +131,16 @@ class PrettyJSON extends HTMLElement {
     if (expandAttribute === null) {
       return 1;
     }
-    return Number.parseInt(expandAttribute);
+    const expandValue = Number.parseInt(expandAttribute);
+    return isNaN(expandValue) || expandValue < 0 ? 0 : expandValue;
   }
 
   #toggle() {
-    const expandValue = this.#expandAttributeValue;
-    const newExpandAttribute = this.#isExpanded
-      ? Math.max(expandValue - 1, 0)
-      : expandValue + 1;
-    this.setAttribute("expand", String(newExpandAttribute));
-    this.#assignIsExpanded();
+    this.#isExpanded = !this.#isExpanded;
+    this.setAttribute(
+      "expand",
+      this.#isExpanded ? String(this.#expandAttributeValue + 1) : "0"
+    );
     this.#render();
   }
 
@@ -218,7 +205,7 @@ class PrettyJSON extends HTMLElement {
       container.classList.add("row");
       const keyElement = this.#createKeyElement(objectKeyName, {
         withArrow: true,
-        expanded: expand > 0,
+        expanded: this.#isExpanded,
       });
       keyElement.addEventListener("click", this.#toggle.bind(this));
       container.appendChild(keyElement);
@@ -233,7 +220,7 @@ class PrettyJSON extends HTMLElement {
     closingBrace.className = "close brace";
     closingBrace.textContent = isArray ? "]" : "}";
 
-    if (expand === 0) {
+    if (!this.#isExpanded) {
       const ellipsis = document.createElement("button");
       ellipsis.className = "ellipsis";
       container.appendChild(ellipsis);
@@ -287,7 +274,7 @@ class PrettyJSON extends HTMLElement {
     svg.setAttribute("class", "arrow");
     const polygon = document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "polygon",
+      "polygon"
     );
 
     polygon.setAttribute("class", "triangle");
@@ -326,13 +313,12 @@ class PrettyJSON extends HTMLElement {
   }
 
   #render() {
-    this.#assignIsExpanded();
     if (!this.shadowRoot) {
       throw new PrettyJSONError("Shadow root not available");
     }
     this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(
-      this.#createChild(this.#input, this.#expandAttributeValue),
+      this.#createChild(this.#input, this.#expandAttributeValue)
     );
 
     if (this.shadowRoot.querySelector("[data-pretty-json]")) {
@@ -347,12 +333,20 @@ class PrettyJSON extends HTMLElement {
 
   /**
    * Handle when attributes change
-   * @param {string} _name
+   * @param {string} name
    * @param {string} _oldValue
-   * @param {string} _newValue
+   * @param {string | null} newValue
    */
-  attributeChangedCallback(_name, _oldValue, _newValue) {
-    this.#render();
+  attributeChangedCallback(name, _oldValue, newValue) {
+    if (name === "expand") {
+      if (newValue === null) {
+        this.#isExpanded = false;
+      } else {
+        const expandValue = Number.parseInt(newValue);
+        this.#isExpanded = !isNaN(expandValue) && expandValue > 0;
+      }
+      this.#render();
+    }
   }
 
   connectedCallback() {
