@@ -69,6 +69,12 @@ jobs:
       - name: Run Playwright tests
         run: yarn test
 
+      - name: Run Playwright tests again with debug
+        if: failure()
+        run: yarn test
+        env:
+          DEBUG: pw:*
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
