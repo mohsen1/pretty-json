@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         os:
-          # - macos-latest # for now we only support linux
+          - macos-latest
           - ubuntu-latest
 
     steps:
