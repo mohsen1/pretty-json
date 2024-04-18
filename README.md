@@ -22,7 +22,11 @@ Include [`pretty-json.js`](https://github.com/mohsen1/pretty-json/blob/main/src/
 
 Your JSON will be rendered as a human-readable format:
 
-<img width="200px" src="screenshot.png" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="screenshot-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="screenshot.png">
+  <img src="screenshot.png" alt="Screenshot" width="200px" />
+</picture>
 
 ## Features
 
