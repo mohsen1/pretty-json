@@ -1,33 +1,54 @@
 name: Playwright Tests
+
 on:
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
+
       - name: Install dependencies
         run: npm install -g yarn && yarn
+
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
+
+      - name: Get pull request description
+        if: github.event_name == 'pull_request'
+        id: pr_description
+        run: echo "::set-output name=description::${{ github.event.pull_request.body }}"
+
       - name: Run Playwright tests
-        run: yarn playwright test
+        run: |
+          if [[ "${{ github.event_name == 'pull_request' && contains(steps.pr_description.outputs.description, '[x] Update Snapshots') && github.event.pull_request.user.login == github.repository_owner }}" == "true" ]]; then
+            yarn playwright test --update-snapshots
+          else
+            yarn playwright test
+          fi
+
+      - name: Commit and push updated snapshots
+        if: github.event_name == 'pull_request' && contains(steps.pr_description.outputs.description, '[x] Update Snapshots') && github.event.pull_request.user.login == github.repository_owner
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Update Playwright snapshots" || echo "No changes to commit"
+          git push
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-      - name: Update README with HTML report link
-        if: always()
-        run: |
-          echo "## Playwright Test Report" >> $GITHUB_STEP_SUMMARY
-          echo "Download the HTML report artifact and open the index.html file to view the test results." >> $GITHUB_STEP_SUMMARY
-          echo "Artifact URL: \`https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\`" >> $GITHUB_STEP_SUMMARY

@@ -98,15 +98,3 @@ To run the tests:
 ```bash
 yarn test
 ```
-
-#### Updating screenshots
-
-If you make changes to the component that affect the visual appearance, you can update the screenshots by running:
-
-```bash
-# You will need Docker installed
-yarn test-in-docker
-```
-
-We use Docker to run the tests in a headless browser inside of a Docker container to
-ensure that the tests run in a consistent environment.

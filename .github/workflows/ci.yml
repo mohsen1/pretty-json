@@ -1,8 +1,3 @@
-# Github Action for CI
-# checks prettier is ran
-# tsc check
-# parcel build (yarn build)
-
 name: CI
 
 on:
@@ -15,8 +10,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

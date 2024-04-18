@@ -11,8 +11,7 @@
   "scripts": {
     "start": "rm -rf .parcel-cache && parcel src/index.html",
     "prettier": "prettier --write .",
-    "test": "playwright test",
-    "test-in-docker": "docker build -t playwright-docker .; docker run -v $(pwd)/tests/screenshots:/home/tests/screenshots -it playwright-docker:latest"
+    "test": "playwright test"
   },
   "prettierignore": [
     "dist/",
