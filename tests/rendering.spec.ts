@@ -35,6 +35,10 @@ const TEST_CASES: RenderingTestCase[] = [
       ),
   },
   {
+    name: "URL string",
+    value: "https://example.com",
+  },
+  {
     name: "deeply nested object",
     value: {
       deeply: { nested: { object: { with: { lots: { of: "values" } } } } },

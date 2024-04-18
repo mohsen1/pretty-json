@@ -90,7 +90,8 @@ class PrettyJSON extends HTMLElement {
     .brace {
       color: var(--brace-color);
     }
-    .string {
+    .string,
+    .url {
       color: var(--string-color);
     }
     .number,
@@ -177,6 +178,15 @@ class PrettyJSON extends HTMLElement {
     return typeof input !== "object" || input === null;
   }
 
+  #isValidStringURL() {
+    try {
+      new URL(this.#input);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   /**
    * @param {Primitive} input
    * @returns {HTMLElement}
@@ -185,7 +195,16 @@ class PrettyJSON extends HTMLElement {
     const container = document.createElement("div");
     const type = typeof input === "object" ? "null" : typeof input;
     container.className = `primitive value ${type}`;
-    container.textContent = JSON.stringify(input);
+    if (this.#isValidStringURL()) {
+      const anchor = document.createElement("a");
+      anchor.className = "url";
+      anchor.href = this.#input;
+      anchor.target = "_blank";
+      anchor.textContent = JSON.stringify(input);
+      container.appendChild(anchor);
+    } else {
+      container.textContent = JSON.stringify(input);
+    }
     return container;
   }
 
