@@ -18,7 +18,6 @@ Include [`pretty-json.js`](https://github.com/mohsen1/pretty-json/blob/main/src/
   "nested": { "key": "value" }
 }</pretty-json>
 ````
-
 <!-- prettier-ignore-end -->
 
 Your JSON will be rendered as a human-readable format:
@@ -66,16 +65,32 @@ You can customize the appearance of the rendered JSON using CSS variables:
 
 ```css
 pretty-json {
-  --key-color: #c00;
+  --key-color: #cc0000;
   --arrow-color: #737373;
   --brace-color: #0030f0;
   --bracket-color: #0030f0;
-  --string-color: #090;
-  --number-color: #00f;
-  --null-color: #666;
+  --string-color: #009900;
+  --number-color: #0000ff;
+  --null-color: #666666;
   --boolean-color: #d23c91;
-  --comma-color: #666;
-  --ellipsis-color: #666;
+  --comma-color: #666666;
+  --ellipsis-color: #666666;
+}
+
+/* Also handle the dark mode */
+@media (prefers-color-scheme: dark) {
+  pretty-json {
+    --key-color: #f73d3d;
+    --arrow-color: #6c6c6c;
+    --brace-color: #0690bc;
+    --bracket-color: #0690bc;
+    --string-color: #21c521;
+    --number-color: #0078b3;
+    --null-color: #8c8888;
+    --boolean-color: #c737b3;
+    --comma-color: #848181;
+    --ellipsis-color: #c2c2c2;
+  }
 }
 ```
 
