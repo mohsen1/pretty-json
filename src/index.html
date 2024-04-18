@@ -8,23 +8,36 @@
     <style>
       :root {
         --code-bg-color: #f8f8f8;
+        --color-dim-bg-color: #dadada;
+        --color-text-color: #000000;
+      }
+      @media screen and (prefers-color-scheme: dark) {
+        :root {
+          --code-bg-color: #000000;
+          --color-dim-bg-color: #1d1d1d;
+          --color-text-color: #ffffff;
+        }
       }
       body {
+        background-color: var(--code-bg-color);
         max-width: 80ch;
         margin-left: auto;
         margin-right: auto;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
       }
+      * {
+        color: var(--color-text-color);
+      }
       code {
-        background-color: var(--code-bg-color);
+        background-color: var(--color-dim-bg-color);
         padding: 0.1rem 0.25rem;
       }
       details summary {
         cursor: pointer;
       }
       pre {
-        background-color: var(--code-bg-color);
+        background-color: var(--color-dim-bg-color);
         padding: 1rem 0.5rem;
         margin: 0;
         text-wrap: pretty;
