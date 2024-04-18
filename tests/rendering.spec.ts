@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test } from "@playwright/test";
 import { assertBodyWithScreenshot } from "./utils";
 
 interface RenderingTestCase {
@@ -26,6 +26,13 @@ const TEST_CASES: RenderingTestCase[] = [
   {
     name: "Null",
     value: null,
+  },
+  {
+    name: "Long string",
+    value:
+      "lorem ipsum sit dolor amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".repeat(
+        200
+      ),
   },
   {
     name: "deeply nested object",
