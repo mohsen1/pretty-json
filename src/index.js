@@ -38,7 +38,6 @@ class PrettyJSON extends HTMLElement {
       --bracket-color: #0030f0;
       --string-color: #090;
       --number-color: #00f;
-      --undefined-color: #666;
       --null-color: #666;
       --boolean-color: #d23c91;
       --comma-color: #666;
@@ -83,9 +82,6 @@ class PrettyJSON extends HTMLElement {
     .number,
     .bigint {
       color: var(--number-color);
-    }
-    .undefined {
-      color: var(--undefined-color);
     }
     .null {
       color: var(--null-color);
