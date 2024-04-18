@@ -61,7 +61,7 @@ jobs:
           git push https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git ${{ github.head_ref }}
 
       - name: Run Playwright tests
-        run: test
+        run: yarn test
 
       - uses: actions/upload-artifact@v4
         if: always()
