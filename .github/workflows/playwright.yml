@@ -25,6 +25,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
+          cache: "yarn"
 
       - name: Cache Playwright browsers
         uses: actions/cache@v3
@@ -68,6 +69,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-report
+          name: playwright-report-${{ runner.os }}
           path: playwright-report/
           retention-days: 30
