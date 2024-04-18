@@ -1,2 +1,5 @@
+# Ignore all platforms except Linux
+# This is done to avoid problems running tests and committing files that are not needed
+# for CI tests.
 **/
 !linux/

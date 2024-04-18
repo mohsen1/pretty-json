@@ -13,15 +13,10 @@ on:
 jobs:
   test:
     timeout-minutes: 60
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
-    strategy:
-      matrix:
-        os:
-          - macos-latest
-          - ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
