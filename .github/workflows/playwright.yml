@@ -2,17 +2,22 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
-    branches: [main, master]
+    branches: [main]
 
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+      pull-requests: write
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os:
+          # - macos-latest # for now we only support linux
+          - ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -22,32 +27,30 @@ jobs:
           node-version: lts/*
 
       - name: Install dependencies
-        run: npm install -g yarn && yarn
+        run: yarn install
 
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
 
-      - name: Get pull request description
-        if: github.event_name == 'pull_request'
-        id: pr_description
-        run: echo "::set-output name=description::${{ github.event.pull_request.body }}"
+      # Update Snapshots only if the PR body contains '[x] Update Snapshots'
+      - name: Update Snapshots if needed
+        if: github.event_name == 'pull_request' && contains(github.event.pull_request.body, '[x] Update Snapshots')
+        run: yarn test --update-snapshots
 
-      - name: Run Playwright tests
-        run: |
-          if [[ "${{ github.event_name == 'pull_request' && contains(steps.pr_description.outputs.description, '[x] Update Snapshots') && github.event.pull_request.user.login == github.repository_owner }}" == "true" ]]; then
-            yarn playwright test --update-snapshots
-          else
-            yarn playwright test
-          fi
-
-      - name: Commit and push updated snapshots
-        if: github.event_name == 'pull_request' && contains(steps.pr_description.outputs.description, '[x] Update Snapshots') && github.event.pull_request.user.login == github.repository_owner
+      - name: Commit and push updated Snapshots
+        if: github.event_name == 'pull_request' && contains(github.event.pull_request.body, '[x] Update Snapshots')
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git config pull.rebase true 
+          git pull origin ${{ github.head_ref }}
+          git checkout ${{ github.head_ref }}
           git add .
-          git commit -m "Update Playwright snapshots" || echo "No changes to commit"
-          git push
+          git commit -m "Update Playwright snapshots from Github Action" || echo "No changes to commit"
+          git push https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git ${{ github.head_ref }}
+
+      - name: Run Playwright tests
+        run: test
 
       - uses: actions/upload-artifact@v4
         if: always()

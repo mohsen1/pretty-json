@@ -1,11 +1,9 @@
 <!--
-This only works if the pull request is issued from the repo owner.
-If you want to update screenshots, please make sure to run the following command before creating the pull request:
-```bash
-npm run test
-```
+Use Github Actions to update the snapshots.
+This is helpful if you can't run the tests locally on all required platform which is the
+case for most people.
 
-You probably can't run on all platforms required. After making a pull request, the repo owner can make a follow up pull request to update the screenshots.
+Please make sure you have test passing on at least one platform before submitting a PR.
  -->
 
 - [ ] Update Snapshots
