@@ -32,6 +32,8 @@ jobs:
         with:
           path: |
             ~/.cache/ms-playwright
+            ~/Library/Caches/ms-playwright
+            %USERPROFILE%\AppData\Local\ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
