@@ -26,10 +26,21 @@ jobs:
         with:
           node-version: lts/*
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
+        id: playwright-cache
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
       - name: Install dependencies
         run: yarn install
 
-      - name: Install Playwright Browsers
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: yarn playwright install --with-deps
 
       # Update Snapshots only if the PR body contains '[x] Update Snapshots'
