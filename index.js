@@ -27,7 +27,7 @@ class PrettyJSON extends HTMLElement {
   #isExpanded;
 
   static get observedAttributes() {
-    return ["expand", "key"];
+    return ["expand", "key", "truncate-string"];
   }
 
   static styles = `/* css */
@@ -42,6 +42,8 @@ class PrettyJSON extends HTMLElement {
       --boolean-color: #d23c91;
       --comma-color: #666666;
       --ellipsis-color: #666666;
+
+      --indent: 2rem;
     }
     @media (prefers-color-scheme: dark) {
       :host {
@@ -113,13 +115,16 @@ class PrettyJSON extends HTMLElement {
     .ellipsis::after {
       content: "…";
     }
+    .string .ellipsis::after {
+      color: var(--string-color);
+    }
     .triangle {
       fill: black;
       stroke: black;
       stroke-width: 0;
     }
     .row {
-      padding-left: 2rem;
+      padding-left: var(--indent);
     }
     .row .row {
       display: block;
@@ -146,11 +151,23 @@ class PrettyJSON extends HTMLElement {
     return isNaN(expandValue) || expandValue < 0 ? 0 : expandValue;
   }
 
+  get #truncateStringAttribute() {
+    const DEFAULT_TRUNCATE_STRING = 500;
+    const truncateStringAttribute = this.getAttribute("truncate-string");
+    if (truncateStringAttribute === null) {
+      return DEFAULT_TRUNCATE_STRING;
+    }
+    const truncateStringValue = Number.parseInt(truncateStringAttribute);
+    return isNaN(truncateStringValue) || truncateStringValue < 0
+      ? 0
+      : truncateStringValue;
+  }
+
   #toggle() {
     this.#isExpanded = !this.#isExpanded;
     this.setAttribute(
       "expand",
-      this.#isExpanded ? String(this.#expandAttributeValue + 1) : "0",
+      this.#isExpanded ? String(this.#expandAttributeValue + 1) : "0"
     );
     this.#render();
   }
@@ -195,16 +212,42 @@ class PrettyJSON extends HTMLElement {
     const container = document.createElement("div");
     const type = typeof input === "object" ? "null" : typeof input;
     container.className = `primitive value ${type}`;
-    if (this.#isValidStringURL()) {
-      const anchor = document.createElement("a");
-      anchor.className = "url";
-      anchor.href = this.#input;
-      anchor.target = "_blank";
-      anchor.textContent = JSON.stringify(input);
-      container.appendChild(anchor);
+    if (typeof input === "string") {
+      if (this.#isValidStringURL()) {
+        const anchor = document.createElement("a");
+        anchor.className = "url";
+        anchor.href = this.#input;
+        anchor.target = "_blank";
+        anchor.textContent = input;
+        container.append('"', anchor, '"');
+      } else if (input.length > this.#truncateStringAttribute) {
+        container.appendChild(this.#createTruncatedStringElement(input));
+      } else {
+        container.textContent = JSON.stringify(input);
+      }
     } else {
       container.textContent = JSON.stringify(input);
     }
+    return container;
+  }
+
+  /**
+   * @param {string} input
+   */
+  #createTruncatedStringElement(input) {
+    const container = document.createElement("div");
+    container.className = "truncated string";
+    const ellipsis = document.createElement("button");
+    ellipsis.addEventListener("click", () => {
+      container.textContent = JSON.stringify(input);
+    });
+    ellipsis.className = "ellipsis";
+    container.append(
+      '"',
+      input.slice(0, this.#truncateStringAttribute),
+      ellipsis,
+      '"'
+    );
     return container;
   }
 
@@ -303,7 +346,7 @@ class PrettyJSON extends HTMLElement {
     svg.setAttribute("class", "arrow");
     const polygon = document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "polygon",
+      "polygon"
     );
 
     polygon.setAttribute("class", "triangle");
@@ -347,7 +390,7 @@ class PrettyJSON extends HTMLElement {
     }
     this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(
-      this.#createChild(this.#input, this.#expandAttributeValue),
+      this.#createChild(this.#input, this.#expandAttributeValue)
     );
 
     if (this.shadowRoot.querySelector("[data-pretty-json]")) {

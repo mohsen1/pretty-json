@@ -41,7 +41,6 @@ Your JSON will be rendered as a human-readable format:
 
 ## To-do List
 
-- [ ] Support truncating very large strings
 - [ ] Support grouping very large arrays
 
 ## Attributes
@@ -54,6 +53,16 @@ By default, the JSON object is rendered expanded up to 1 level deep. You can set
 
 ```html
 <pretty-json expand="2">{"hello": {"world": "!"}}</pretty-json>
+```
+
+### `truncate-string`
+
+By default, strings longer than 500 characters are truncated with an ellipsis. You can set the `truncate-string` attribute to a number to truncate strings longer than that number of characters:
+
+```html
+<pretty-json truncate-string="10">
+  {"hello": "long string that will be truncated"}
+</pretty-json>
 ```
 
 #### Collapsed by default
@@ -80,6 +89,8 @@ pretty-json {
   --boolean-color: #d23c91;
   --comma-color: #666666;
   --ellipsis-color: #666666;
+
+  --indent: 2rem;
 }
 
 /* Also handle the dark mode */

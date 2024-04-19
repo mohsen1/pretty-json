@@ -3,7 +3,7 @@
  * @typedef {Object} RenderingTestCase
  * @property {string} name - The name of the test case.
  * @property {*} value - The value to be rendered.
- * @property {string} [attributes] - Optional attributes for the test case.
+ * @property {[string, string][]} [attributes] - Optional attributes for the test case.
  */
 
 /**
@@ -11,6 +11,27 @@
  * @type {RenderingTestCase[]}
  */
 export const TEST_CASES = [
+  {
+    name: "Simple Example",
+    value: {
+      hello: "world",
+      value: 42,
+      enabled: true,
+      extra: null,
+      nested: { key: "value" },
+    },
+  },
+  {
+    name: "Expanded",
+    value: {
+      hello: "world",
+      value: 42,
+      enabled: true,
+      extra: null,
+      nested: { key: "value" },
+    },
+    attributes: [["expand", "2"]],
+  },
   {
     name: "String",
     value: "example string",
@@ -86,7 +107,15 @@ export const TEST_CASES = [
   {
     name: "Long string",
     value:
-      "lorem ipsum sit dolor amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".repeat(
+      "lorem ipsum sit dolor amet consectetur adipis elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".repeat(
+        200
+      ),
+  },
+  {
+    name: "Long string with custom truncation",
+    attributes: [["truncate-string", "700"]],
+    value:
+      "lorem ipsum sit dolor amet consectetur adipis elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".repeat(
         200
       ),
   },
