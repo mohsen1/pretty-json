@@ -24,7 +24,7 @@ jobs:
         run: yarn install
 
       - name: Run Prettier
-        run: yarn prettier --check src/ tests/
+        run: yarn prettier --check .
 
       - name: Run TypeScript check
         run: yarn tsc
