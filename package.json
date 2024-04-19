@@ -9,7 +9,7 @@
     "index.js"
   ],
   "scripts": {
-    "start": "rm -rf .parcel-cache && parcel index.html",
+    "start": "parcel serve --no-cache index.html",
     "prettier": "prettier --write .",
     "test": "playwright test"
   },

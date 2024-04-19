@@ -10,22 +10,24 @@ Include [`pretty-json.js`](https://github.com/mohsen1/pretty-json/blob/main/inde
 
 <!-- prettier-ignore-start -->
 ```html
-<pretty-json>{
+<pretty-json>
+{
   "hello": "world",
   "value": 42,
   "enabled": true,
   "extra": null,
   "nested": { "key": "value" }
-}</pretty-json>
+}
+</pretty-json>
 ````
 <!-- prettier-ignore-end -->
 
 Your JSON will be rendered as a human-readable format:
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="screenshot-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="screenshot.png">
-  <img src="screenshot.png" alt="Screenshot" width="200px" />
+  <source media="(prefers-color-scheme: dark)" srcset="./screenshot-dark.png" />
+  <source media="(prefers-color-scheme: light)" srcset="./screenshot.png" />
+  <img src="./screenshot.png" alt="Screenshot" width="200px" />
 </picture>
 
 ## Features
