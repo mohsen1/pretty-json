@@ -150,7 +150,7 @@ class PrettyJSON extends HTMLElement {
     this.#isExpanded = !this.#isExpanded;
     this.setAttribute(
       "expand",
-      this.#isExpanded ? String(this.#expandAttributeValue + 1) : "0",
+      this.#isExpanded ? String(this.#expandAttributeValue + 1) : "0"
     );
     this.#render();
   }
@@ -195,13 +195,13 @@ class PrettyJSON extends HTMLElement {
     const container = document.createElement("div");
     const type = typeof input === "object" ? "null" : typeof input;
     container.className = `primitive value ${type}`;
-    if (this.#isValidStringURL()) {
+    if (typeof input === "string" && this.#isValidStringURL()) {
       const anchor = document.createElement("a");
       anchor.className = "url";
       anchor.href = this.#input;
       anchor.target = "_blank";
-      anchor.textContent = JSON.stringify(input);
-      container.appendChild(anchor);
+      anchor.textContent = input;
+      container.append('"', anchor, '"');
     } else {
       container.textContent = JSON.stringify(input);
     }
@@ -303,7 +303,7 @@ class PrettyJSON extends HTMLElement {
     svg.setAttribute("class", "arrow");
     const polygon = document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "polygon",
+      "polygon"
     );
 
     polygon.setAttribute("class", "triangle");
@@ -347,7 +347,7 @@ class PrettyJSON extends HTMLElement {
     }
     this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(
-      this.#createChild(this.#input, this.#expandAttributeValue),
+      this.#createChild(this.#input, this.#expandAttributeValue)
     );
 
     if (this.shadowRoot.querySelector("[data-pretty-json]")) {
