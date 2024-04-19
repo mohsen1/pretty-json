@@ -80,6 +80,8 @@ pretty-json {
   --boolean-color: #d23c91;
   --comma-color: #666666;
   --ellipsis-color: #666666;
+
+  --indent: 2rem;
 }
 
 /* Also handle the dark mode */

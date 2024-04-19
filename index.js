@@ -42,6 +42,8 @@ class PrettyJSON extends HTMLElement {
       --boolean-color: #d23c91;
       --comma-color: #666666;
       --ellipsis-color: #666666;
+
+      --indent: 2rem;
     }
     @media (prefers-color-scheme: dark) {
       :host {
@@ -119,7 +121,7 @@ class PrettyJSON extends HTMLElement {
       stroke-width: 0;
     }
     .row {
-      padding-left: 2rem;
+      padding-left: var(--indent);
     }
     .row .row {
       display: block;
