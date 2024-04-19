@@ -39,7 +39,6 @@ Your JSON will be rendered as a human-readable format:
 
 ## To-do List
 
-- [ ] Support clicking on strings that are links
 - [ ] Support truncating very large strings
 - [ ] Support grouping very large arrays
 
