@@ -107,7 +107,15 @@ export const TEST_CASES = [
   {
     name: "Long string",
     value:
-      "lorem ipsum sit dolor amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".repeat(
+      "lorem ipsum sit dolor amet consectetur adipis elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".repeat(
+        200
+      ),
+  },
+  {
+    name: "Long string with custom truncation",
+    attributes: [["truncate-string", "700"]],
+    value:
+      "lorem ipsum sit dolor amet consectetur adipis elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".repeat(
         200
       ),
   },

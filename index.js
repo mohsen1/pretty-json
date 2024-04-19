@@ -27,7 +27,7 @@ class PrettyJSON extends HTMLElement {
   #isExpanded;
 
   static get observedAttributes() {
-    return ["expand", "key"];
+    return ["expand", "key", "truncate-string"];
   }
 
   static styles = `/* css */
@@ -115,6 +115,9 @@ class PrettyJSON extends HTMLElement {
     .ellipsis::after {
       content: "…";
     }
+    .string .ellipsis::after {
+      color: var(--string-color);
+    }
     .triangle {
       fill: black;
       stroke: black;
@@ -146,6 +149,18 @@ class PrettyJSON extends HTMLElement {
     }
     const expandValue = Number.parseInt(expandAttribute);
     return isNaN(expandValue) || expandValue < 0 ? 0 : expandValue;
+  }
+
+  get #truncateStringAttribute() {
+    const DEFAULT_TRUNCATE_STRING = 500;
+    const truncateStringAttribute = this.getAttribute("truncate-string");
+    if (truncateStringAttribute === null) {
+      return DEFAULT_TRUNCATE_STRING;
+    }
+    const truncateStringValue = Number.parseInt(truncateStringAttribute);
+    return isNaN(truncateStringValue) || truncateStringValue < 0
+      ? 0
+      : truncateStringValue;
   }
 
   #toggle() {
@@ -197,16 +212,42 @@ class PrettyJSON extends HTMLElement {
     const container = document.createElement("div");
     const type = typeof input === "object" ? "null" : typeof input;
     container.className = `primitive value ${type}`;
-    if (typeof input === "string" && this.#isValidStringURL()) {
-      const anchor = document.createElement("a");
-      anchor.className = "url";
-      anchor.href = this.#input;
-      anchor.target = "_blank";
-      anchor.textContent = input;
-      container.append('"', anchor, '"');
+    if (typeof input === "string") {
+      if (this.#isValidStringURL()) {
+        const anchor = document.createElement("a");
+        anchor.className = "url";
+        anchor.href = this.#input;
+        anchor.target = "_blank";
+        anchor.textContent = input;
+        container.append('"', anchor, '"');
+      } else if (input.length > this.#truncateStringAttribute) {
+        container.appendChild(this.#createTruncatedStringElement(input));
+      } else {
+        container.textContent = JSON.stringify(input);
+      }
     } else {
       container.textContent = JSON.stringify(input);
     }
+    return container;
+  }
+
+  /**
+   * @param {string} input
+   */
+  #createTruncatedStringElement(input) {
+    const container = document.createElement("div");
+    container.className = "truncated string";
+    const ellipsis = document.createElement("button");
+    ellipsis.addEventListener("click", () => {
+      container.textContent = JSON.stringify(input);
+    });
+    ellipsis.className = "ellipsis";
+    container.append(
+      '"',
+      input.slice(0, this.#truncateStringAttribute),
+      ellipsis,
+      '"'
+    );
     return container;
   }
 
