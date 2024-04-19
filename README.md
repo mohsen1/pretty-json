@@ -6,7 +6,7 @@
 
 ## Usage
 
-Include [`pretty-json.js`](https://github.com/mohsen1/pretty-json/blob/main/src/index.js) in your HTML page and use the HTML custom element as follows:
+Include [`pretty-json.js`](https://github.com/mohsen1/pretty-json/blob/main/index.js) in your HTML page and use the HTML custom element as follows:
 
 <!-- prettier-ignore-start -->
 ```html
