@@ -1,7 +1,9 @@
+// @ts-check
 /**
  * @typedef {Object} RenderingTestCase
  * @property {string} name - The name of the test case.
  * @property {*} value - The value to be rendered.
+ * @property {string} [attributes] - Optional attributes for the test case.
  */
 
 /**
