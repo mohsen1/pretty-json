@@ -20,10 +20,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
 
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
+          cache: "yarn"
 
       - name: Install dependencies
         run: yarn install
@@ -34,16 +38,12 @@ jobs:
       # Update Snapshots only if the PR body contains '[x] Update Snapshots'
       - name: Update Snapshots if needed
         if: github.event_name == 'pull_request' && contains(github.event.pull_request.body, '[x] Update Snapshots')
-        run: yarn test --update-snapshots
-
-      - name: Commit and push updated Snapshots
-        if: github.event_name == 'pull_request' && contains(github.event.pull_request.body, '[x] Update Snapshots')
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git config pull.rebase true 
-          git pull origin ${{ github.head_ref }}
-          git checkout ${{ github.head_ref }}
+          yarn test --update-snapshots
+          git branch
+          git status
           git add .
           git commit -m "Update Playwright snapshots from Github Action" || echo "No changes to commit"
           git push https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git ${{ github.head_ref }}
