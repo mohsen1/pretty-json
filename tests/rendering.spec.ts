@@ -31,7 +31,7 @@ const TEST_CASES: RenderingTestCase[] = [
     name: "Long string",
     value:
       "lorem ipsum sit dolor amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".repeat(
-        200
+        200,
       ),
   },
   {

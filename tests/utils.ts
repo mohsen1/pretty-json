@@ -28,6 +28,6 @@ export async function assertBodyWithScreenshot({
     name,
     {
       threshold: 0.25,
-    }
+    },
   );
 }

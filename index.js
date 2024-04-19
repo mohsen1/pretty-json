@@ -150,7 +150,7 @@ class PrettyJSON extends HTMLElement {
     this.#isExpanded = !this.#isExpanded;
     this.setAttribute(
       "expand",
-      this.#isExpanded ? String(this.#expandAttributeValue + 1) : "0"
+      this.#isExpanded ? String(this.#expandAttributeValue + 1) : "0",
     );
     this.#render();
   }
@@ -303,7 +303,7 @@ class PrettyJSON extends HTMLElement {
     svg.setAttribute("class", "arrow");
     const polygon = document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "polygon"
+      "polygon",
     );
 
     polygon.setAttribute("class", "triangle");
@@ -347,7 +347,7 @@ class PrettyJSON extends HTMLElement {
     }
     this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(
-      this.#createChild(this.#input, this.#expandAttributeValue)
+      this.#createChild(this.#input, this.#expandAttributeValue),
     );
 
     if (this.shadowRoot.querySelector("[data-pretty-json]")) {
