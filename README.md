@@ -1,7 +1,5 @@
 # `<pretty-json>` HTML Custom Element
 
-> Development in progress. Not ready for use.
-
 `<pretty-json>` is an HTML custom element that allows you to render JSON objects in HTML documents with human-readable formatting and expandable interaction for browsing deep JSON structures.
 
 ## Usage
