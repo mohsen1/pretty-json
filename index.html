@@ -24,7 +24,12 @@
 
           const pre = document.createElement("pre");
           const json = JSON.stringify(testCase.value, null, 2);
-          pre.textContent = `<pretty-json>\n${
+          const attributes = testCase.attributes
+            ? ` ${testCase.attributes
+                .map(([key, value]) => `${key}="${value}"`)
+                .join(" ")}`
+            : "";
+          pre.textContent = `<pretty-json${attributes}>\n${
             json.slice(0, 300).trim() + (json.length > 300 ? '..."' : "")
           }\n</pretty-json>`;
           container.appendChild(pre);
@@ -32,6 +37,12 @@
           const prettyJson = document.createElement("pretty-json");
           prettyJson.textContent = JSON.stringify(testCase.value);
           container.appendChild(prettyJson);
+
+          if (testCase.attributes) {
+            for (const [key, value] of testCase.attributes) {
+              prettyJson.setAttribute(key, value);
+            }
+          }
 
           document.body.appendChild(container);
         }

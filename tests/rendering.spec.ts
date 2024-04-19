@@ -11,6 +11,11 @@ test.describe.serial("Rendering", () => {
       await page.evaluate((testCase) => {
         const prettyJson = document.createElement("pretty-json");
         prettyJson.textContent = JSON.stringify(testCase);
+        if (testCase.attributes) {
+          for (const [key, value] of testCase.attributes) {
+            prettyJson.setAttribute(key, value);
+          }
+        }
         document.body.appendChild(prettyJson);
       }, testCase);
 
