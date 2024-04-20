@@ -110,4 +110,46 @@ test.describe("Interaction", () => {
       name: "various-example-array.png",
     });
   });
+  test("Very long string", async ({ page }) => {
+    await page.goto("/");
+
+    // create a <pretty-json> element with a very long string as its inner text
+    await page.evaluate(() => {
+      const lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ";
+      const longString = lorem.repeat(300);
+      const prettyJson = document.createElement("pretty-json");
+      prettyJson.setAttribute("data-testid", "long-string-example");
+      prettyJson.textContent = JSON.stringify(longString);
+      document.body.appendChild(prettyJson);
+    });
+
+    const longStringExample = page.getByTestId("long-string-example");
+    await longStringExample.scrollIntoViewIfNeeded();
+
+    // Ensure collapsed state is correct
+    await assertBodyWithScreenshot({
+      page,
+      name: "long-string-example-collapsed.png",
+    });
+
+    // open up the long string
+    await longStringExample.getByRole("button").click();
+    await longStringExample.scrollIntoViewIfNeeded();
+
+    // Ensure the final state is correct
+    await assertBodyWithScreenshot({
+      page,
+      name: "long-string-example-expanded.png",
+    });
+
+    // open up the long string again
+    await longStringExample.getByRole("button").click();
+    await longStringExample.scrollIntoViewIfNeeded();
+
+    // Ensure the final state is correct
+    await assertBodyWithScreenshot({
+      page,
+      name: "long-string-example-expanded-more.png",
+    });
+  });
 });
