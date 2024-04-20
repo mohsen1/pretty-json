@@ -113,8 +113,8 @@ pretty-json {
 To run the development server:
 
 ```bash
-npm install
-npm start
+yarn install
+yarn start
 ```
 
 ### Running tests
