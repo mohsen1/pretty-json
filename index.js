@@ -27,8 +27,12 @@ class PrettyJSON extends HTMLElement {
   #isExpanded;
 
   static get observedAttributes() {
-    return ["expand", "key", "truncate-string"];
+    return ["expand", "key", "truncate-string", "truncate-array"];
   }
+
+  static DEFAULT_TRUNCATE_STRING = 500;
+
+  static DEFAULT_TRUNCATE_ARRAY = 50;
 
   static styles = `/* css */
     :host {
@@ -152,15 +156,25 @@ class PrettyJSON extends HTMLElement {
   }
 
   get #truncateStringAttributeValue() {
-    const DEFAULT_TRUNCATE_STRING = 500;
     const truncateStringAttribute = this.getAttribute("truncate-string");
     if (truncateStringAttribute === null) {
-      return DEFAULT_TRUNCATE_STRING;
+      return PrettyJSON.DEFAULT_TRUNCATE_STRING;
     }
     const truncateStringValue = Number.parseInt(truncateStringAttribute);
     return isNaN(truncateStringValue) || truncateStringValue < 0
       ? 0
       : truncateStringValue;
+  }
+
+  get #truncateArrayAttributeValue() {
+    const truncateArrayAttribute = this.getAttribute("truncate-array");
+    if (truncateArrayAttribute === null) {
+      return PrettyJSON.DEFAULT_TRUNCATE_ARRAY;
+    }
+    const truncateArrayValue = Number.parseInt(truncateArrayAttribute);
+    return isNaN(truncateArrayValue) || truncateArrayValue < 0
+      ? 0
+      : truncateArrayValue;
   }
 
   #toggle() {
@@ -271,6 +285,12 @@ class PrettyJSON extends HTMLElement {
    */
   #createContainer() {
     const container = document.createElement("div");
+    if (
+      Array.isArray(this.#input) &&
+      this.#input.length > this.#truncateArrayAttributeValue
+    ) {
+      container.dataset.expandedTimes = "1";
+    }
     container.className = "container";
     return container;
   }
@@ -316,34 +336,56 @@ class PrettyJSON extends HTMLElement {
       return container;
     }
 
-    Object.entries(object).forEach(([key, value], index) => {
-      // for primitives we make a row here
-      if (this.#isPrimitiveValue(value)) {
-        const rowContainer = document.createElement("div");
-        rowContainer.className = "row";
-        if (!isArray) {
-          const keyElement = this.#createKeyElement(key);
-          rowContainer.appendChild(keyElement);
-        }
-        rowContainer.appendChild(this.#createPrimitiveValueElement(value));
-        container.appendChild(rowContainer);
-        const isLast = index === Object.keys(object).length - 1;
-        if (!isLast) {
-          const comma = document.createElement("span");
-          comma.className = "comma";
-          comma.textContent = ",";
-          rowContainer.appendChild(comma);
-        }
-        return;
-      }
+    const sliceMembersTo = isArray
+      ? Number.parseInt(container.dataset.expandedTimes || "1") *
+        this.#truncateArrayAttributeValue
+      : Infinity;
 
-      // for objects and arrays we make a "container row"
-      const prettyJsonElement = document.createElement("pretty-json");
-      prettyJsonElement.textContent = JSON.stringify(value);
-      prettyJsonElement.setAttribute("expand", String(expand - 1));
-      prettyJsonElement.setAttribute("key", key);
-      container.appendChild(prettyJsonElement);
-    });
+    Object.entries(object)
+      .slice(0, sliceMembersTo)
+      .forEach(([key, value], index) => {
+        // for primitives we make a row here
+        if (this.#isPrimitiveValue(value)) {
+          const rowContainer = document.createElement("div");
+          rowContainer.className = "row";
+          if (!isArray) {
+            const keyElement = this.#createKeyElement(key);
+            rowContainer.appendChild(keyElement);
+          }
+          rowContainer.appendChild(this.#createPrimitiveValueElement(value));
+          container.appendChild(rowContainer);
+          const isLast = index === Object.keys(object).length - 1;
+          if (!isLast) {
+            const comma = document.createElement("span");
+            comma.className = "comma";
+            comma.textContent = ",";
+            rowContainer.appendChild(comma);
+          } else if (sliceMembersTo < Object.keys(object).length) {
+            const ellipsis = document.createElement("button");
+            ellipsis.className = "ellipsis";
+            container.appendChild(ellipsis);
+            ellipsis.addEventListener(
+              "click",
+              (() => {
+                const expandedTimes = Number.parseInt(
+                  container.dataset.expandedTimes ?? "1"
+                );
+                container.dataset.expandedTimes = String(expandedTimes + 1);
+                this.#render();
+              }).bind(this)
+            );
+            rowContainer.appendChild(ellipsis);
+          }
+          return;
+        }
+
+        // for objects and arrays we make a "container row"
+        const prettyJsonElement = document.createElement("pretty-json");
+        prettyJsonElement.textContent = JSON.stringify(value);
+        prettyJsonElement.setAttribute("expand", String(expand - 1));
+        prettyJsonElement.setAttribute("key", key);
+        container.appendChild(prettyJsonElement);
+      });
 
     container.appendChild(closingBrace);
     return container;

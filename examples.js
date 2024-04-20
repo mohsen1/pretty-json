@@ -119,4 +119,8 @@ export const TEST_CASES = [
         200
       ),
   },
+  {
+    name: "Large array",
+    value: Array.from({ length: 100 }, (_, i) => `item ${i}`),
+  },
 ];
