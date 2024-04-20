@@ -1,0 +1,24 @@
+name: npm-publish
+on:
+  push:
+    branches:
+      - master
+jobs:
+  npm-publish:
+    name: npm-publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@master
+      - name: Set up Node.js
+        uses: actions/setup-node@master
+        with:
+          node-version: lts/*
+          cache: "yarn"
+      - name: Install dependencies
+        run: yarn
+      - name: Publish
+        uses: Github-Actions-Community/merge-release@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
