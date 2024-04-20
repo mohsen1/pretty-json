@@ -4,10 +4,11 @@
 
 ## Usage
 
-Include [`pretty-json.js`](https://github.com/mohsen1/pretty-json/blob/main/index.js) in your HTML page and use the HTML custom element as follows:
+Include [`pretty-json-custom-element/index.js`](https://github.com/mohsen1/pretty-json/blob/main/index.js) in your HTML page and use the HTML custom element as follows:
 
 <!-- prettier-ignore-start -->
 ```html
+<script defer src="https://unpkg.com/pretty-json-custom-element/index.js"></script>
 <pretty-json>
 {
   "hello": "world",
