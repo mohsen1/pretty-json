@@ -151,7 +151,7 @@ class PrettyJSON extends HTMLElement {
     return isNaN(expandValue) || expandValue < 0 ? 0 : expandValue;
   }
 
-  get #truncateStringAttribute() {
+  get #truncateStringAttributeValue() {
     const DEFAULT_TRUNCATE_STRING = 500;
     const truncateStringAttribute = this.getAttribute("truncate-string");
     if (truncateStringAttribute === null) {
@@ -220,7 +220,7 @@ class PrettyJSON extends HTMLElement {
         anchor.target = "_blank";
         anchor.textContent = input;
         container.append('"', anchor, '"');
-      } else if (input.length > this.#truncateStringAttribute) {
+      } else if (input.length > this.#truncateStringAttributeValue) {
         container.appendChild(this.#createTruncatedStringElement(input));
       } else {
         container.textContent = JSON.stringify(input);
@@ -236,15 +236,30 @@ class PrettyJSON extends HTMLElement {
    */
   #createTruncatedStringElement(input) {
     const container = document.createElement("div");
+    container.dataset.expandedTimes = "1";
     container.className = "truncated string";
     const ellipsis = document.createElement("button");
-    ellipsis.addEventListener("click", () => {
-      container.textContent = JSON.stringify(input);
-    });
     ellipsis.className = "ellipsis";
+
+    ellipsis.addEventListener("click", () => {
+      const expandedTimes = Number.parseInt(
+        container.dataset.expandedTimes ?? "1"
+      );
+      container.dataset.expandedTimes = String(expandedTimes + 1);
+      const expandedString = input.slice(
+        0,
+        (expandedTimes + 1) * this.#truncateStringAttributeValue
+      );
+      const textChild = container.childNodes[1];
+      container.replaceChild(
+        document.createTextNode(expandedString),
+        textChild
+      );
+    });
+
     container.append(
       '"',
-      input.slice(0, this.#truncateStringAttribute),
+      input.slice(0, this.#truncateStringAttributeValue),
       ellipsis,
       '"'
     );

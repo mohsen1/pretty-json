@@ -54,6 +54,14 @@ By default, the JSON object is rendered expanded up to 1 level deep. You can set
 <pretty-json expand="2">{"hello": {"world": "!"}}</pretty-json>
 ```
 
+#### Collapsed by default
+
+You can set the `expand` attribute to `0` to render the JSON object collapsed by default:
+
+```html
+<pretty-json expand="0">{"hello": {"world": "!"}}</pretty-json>
+```
+
 ### `truncate-string`
 
 By default, strings longer than 500 characters are truncated with an ellipsis. You can set the `truncate-string` attribute to a number to truncate strings longer than that number of characters:
@@ -62,14 +70,6 @@ By default, strings longer than 500 characters are truncated with an ellipsis. Y
 <pretty-json truncate-string="10">
   {"hello": "long string that will be truncated"}
 </pretty-json>
-```
-
-#### Collapsed by default
-
-You can set the `expand` attribute to `0` to render the JSON object collapsed by default:
-
-```html
-<pretty-json expand="0">{"hello": {"world": "!"}}</pretty-json>
 ```
 
 ## Customization

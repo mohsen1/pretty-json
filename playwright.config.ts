@@ -44,7 +44,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: `yarn parcel tests/test-runner.html --port ${devServerPort}`,
+    command: `yarn parcel --no-cache tests/test-runner.html --port ${devServerPort}`,
     url: `http://127.0.0.1:${devServerPort}`,
     reuseExistingServer: !process.env.CI,
   },
