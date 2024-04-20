@@ -6,10 +6,7 @@
   "author": "Mohsen Azimi",
   "license": "MIT",
   "files": [
-    "index.js",
-    "screenshot-dark.png",
-    "screenshot.png",
-    "README.md"
+    "index.js"
   ],
   "scripts": {
     "start": "parcel serve --no-cache index.html",
