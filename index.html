@@ -59,6 +59,7 @@
         Array.from(preElements).map(async (pre) => {
           pre.innerHTML = await codeToHtml(pre.textContent, {
             lang: "html",
+            lineWrapping: true,
             themes: {
               dark: "github-dark",
               light: "github-light",
@@ -104,8 +105,11 @@
       .example {
         margin-bottom: 3rem;
       }
-      .shiki {
+
+      pre.shiki {
         padding: 0.5rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
       }
       @media (prefers-color-scheme: dark) {
         .shiki,
