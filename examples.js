@@ -2,6 +2,7 @@
 /**
  * @typedef {Object} RenderingTestCase
  * @property {string} name - The name of the test case.
+ * @property {string} [description] - The description of the test case. (Optional)
  * @property {*} value - The value to be rendered.
  * @property {[string, string][]} [attributes] - Optional attributes for the test case.
  */
@@ -23,6 +24,8 @@ export const TEST_CASES = [
   },
   {
     name: "Expanded",
+    description:
+      "An object with `expand` attribute set to `2`. This will expand the object to 2 levels.",
     value: {
       hello: "world",
       value: 42,
@@ -33,64 +36,73 @@ export const TEST_CASES = [
     attributes: [["expand", "2"]],
   },
   {
+    name: "Collapsed",
+    description:
+      "An object with `expand` attribute set to `0`. This will collapse the object.",
+    value: {
+      hello: "world",
+      value: 42,
+      enabled: true,
+      extra: null,
+      nested: { key: "value" },
+    },
+  },
+  {
+    name: "Themed",
+    description: "An object with custom styles applied.",
+    attributes: [
+      [
+        "style",
+        `
+          --key-color: red;
+          --arrow-color: blue;
+          --brace-color: green;
+          --bracket-color: purple;
+          --indent: 4rem;
+        `
+          .trim()
+          .replace(/\n\s+/g, " "),
+      ],
+    ],
+    value: {
+      hello: "world",
+      value: 42,
+      enabled: true,
+      extra: null,
+      nested: { key: "value" },
+    },
+  },
+  {
     name: "String",
+    description:
+      "A simple string value. All primitive types are supported as long as they are valid JSON.",
     value: "example string",
   },
   {
     name: "Number",
+    description: "A simple number value.",
     value: 3232323,
   },
   {
     name: "Boolean (true)",
+    description: "A boolean value with the value `true`.",
     value: true,
   },
   {
-    name: "Boolean (false)",
-    value: false,
-  },
-  {
     name: "Null",
+    description: "A null value.",
     value: null,
   },
   {
     name: "URL string",
+    description: "A string containing a URL.",
     value: "https://example.com",
   },
   {
     name: "deeply nested object",
+    description: "An object with multiple levels of nesting.",
     value: {
-      deeply: { nested: { object: { with: { lots: { of: "values" } } } } },
-    },
-  },
-  {
-    name: "object with lots of keys on the first level",
-    value: {
-      a: 1,
-      b: 2,
-      c: 3,
-      d: 4,
-      e: 5,
-      f: 6,
-      g: 7,
-      h: 8,
-      i: 9,
-      j: 10,
-      k: 11,
-      l: 12,
-      m: 13,
-      n: 14,
-      o: 15,
-      p: 16,
-      q: 17,
-      r: 18,
-      s: 19,
-      t: 20,
-      u: 21,
-      v: 22,
-      w: 23,
-      x: 24,
-      y: 25,
-      z: 26,
+      deeply: { nested: { object: { with: { lots: { of: "levels" } } } } },
     },
   },
   {
@@ -106,13 +118,15 @@ export const TEST_CASES = [
   },
   {
     name: "Long string",
+    description: "A long string that will be truncated.",
     value:
-      "lorem ipsum sit dolor amet consectetur adipis elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".repeat(
+      "This long string is truncated. Clicking on ellipsis will expand it. lorem ipsum sit dolor amet consectetur adipis elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".repeat(
         200
       ),
   },
   {
     name: "Long string with custom truncation",
+    description: "A long string that will be truncated with a custom length.",
     attributes: [["truncate-string", "700"]],
     value:
       "lorem ipsum sit dolor amet consectetur adipis elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".repeat(
