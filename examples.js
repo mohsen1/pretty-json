@@ -54,7 +54,7 @@ export const TEST_CASES = [
       [
         "style",
         `
-          --key-color: lime;
+          --key-color: rebeccapurple;
           --arrow-color: blue;
           --brace-color: magenta;
           --bracket-color: purple;

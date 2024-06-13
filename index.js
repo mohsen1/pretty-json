@@ -60,7 +60,7 @@ class PrettyJSON extends HTMLElement {
     },
   };
 
-  getCssVariables() {
+  #getCssVariables() {
     const prefersDarkMode = window.matchMedia(
       "(prefers-color-scheme: dark)"
     ).matches;
@@ -96,8 +96,8 @@ class PrettyJSON extends HTMLElement {
     };
   }
 
-  get styles() {
-    const variables = this.getCssVariables();
+  get #styles() {
+    const variables = this.#getCssVariables();
     return `/* css */
     :host {
       --key-color: ${variables.keyColor};
@@ -469,7 +469,7 @@ class PrettyJSON extends HTMLElement {
 
     const styles = document.createElement("style");
     styles.setAttribute("data-pretty-json", "");
-    styles.textContent = this.styles;
+    styles.textContent = this.#styles;
     this.shadowRoot.appendChild(styles);
   }
 
