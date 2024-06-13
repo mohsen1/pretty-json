@@ -64,15 +64,14 @@ class PrettyJSON extends HTMLElement {
     const prefersDarkMode = window.matchMedia(
       "(prefers-color-scheme: dark)"
     ).matches;
-    if (!this.shadowRoot) {
-      return prefersDarkMode
-        ? PrettyJSON.DEFAULT_VARIABLES.dark
-        : PrettyJSON.DEFAULT_VARIABLES.light;
-    }
-    const style = getComputedStyle(this.shadowRoot.host);
     const variables = prefersDarkMode
       ? PrettyJSON.DEFAULT_VARIABLES.dark
       : PrettyJSON.DEFAULT_VARIABLES.light;
+    if (!this.shadowRoot) {
+      return variables;
+    }
+    const style = getComputedStyle(this.shadowRoot.host);
+
     return {
       keyColor: style.getPropertyValue("--key-color") || variables.keyColor,
       arrowColor:
