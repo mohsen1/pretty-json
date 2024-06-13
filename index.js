@@ -32,58 +32,67 @@ class PrettyJSON extends HTMLElement {
 
   // Default colors and styles
   static DEFAULT_VARIABLES = {
-    keyColor: "#cc0000",
-    arrowColor: "#737373",
-    braceColor: "#0030f0",
-    bracketColor: "#0030f0",
-    stringColor: "#009900",
-    numberColor: "#0000ff",
-    nullColor: "#666666",
-    booleanColor: "#d23c91",
-    commaColor: "#666666",
-    ellipsisColor: "#666666",
-    indent: "2rem",
+    light: {
+      keyColor: "#cc0000",
+      arrowColor: "#737373",
+      braceColor: "#0030f0",
+      bracketColor: "#0030f0",
+      stringColor: "#009900",
+      numberColor: "#0000ff",
+      nullColor: "#666666",
+      booleanColor: "#d23c91",
+      commaColor: "#666666",
+      ellipsisColor: "#666666",
+      indent: "2rem",
+    },
+    dark: {
+      keyColor: "#f73d3d",
+      arrowColor: "#6c6c6c",
+      braceColor: "#0690bc",
+      bracketColor: "#0690bc",
+      stringColor: "#21c521",
+      numberColor: "#0078b3",
+      nullColor: "#8c8888",
+      booleanColor: "#c737b3",
+      commaColor: "#848181",
+      ellipsisColor: "#c2c2c2",
+      indent: "2rem",
+    },
   };
 
   getCssVariables() {
+    const prefersDarkMode = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
     if (!this.shadowRoot) {
-      return PrettyJSON.DEFAULT_VARIABLES;
+      return prefersDarkMode
+        ? PrettyJSON.DEFAULT_VARIABLES.dark
+        : PrettyJSON.DEFAULT_VARIABLES.light;
     }
     const style = getComputedStyle(this.shadowRoot.host);
+    const variables = prefersDarkMode
+      ? PrettyJSON.DEFAULT_VARIABLES.dark
+      : PrettyJSON.DEFAULT_VARIABLES.light;
     return {
-      keyColor:
-        style.getPropertyValue("--key-color") ||
-        PrettyJSON.DEFAULT_VARIABLES.keyColor,
+      keyColor: style.getPropertyValue("--key-color") || variables.keyColor,
       arrowColor:
-        style.getPropertyValue("--arrow-color") ||
-        PrettyJSON.DEFAULT_VARIABLES.arrowColor,
+        style.getPropertyValue("--arrow-color") || variables.arrowColor,
       braceColor:
-        style.getPropertyValue("--brace-color") ||
-        PrettyJSON.DEFAULT_VARIABLES.braceColor,
+        style.getPropertyValue("--brace-color") || variables.braceColor,
       bracketColor:
-        style.getPropertyValue("--bracket-color") ||
-        PrettyJSON.DEFAULT_VARIABLES.bracketColor,
+        style.getPropertyValue("--bracket-color") || variables.bracketColor,
       stringColor:
-        style.getPropertyValue("--string-color") ||
-        PrettyJSON.DEFAULT_VARIABLES.stringColor,
+        style.getPropertyValue("--string-color") || variables.stringColor,
       numberColor:
-        style.getPropertyValue("--number-color") ||
-        PrettyJSON.DEFAULT_VARIABLES.numberColor,
-      nullColor:
-        style.getPropertyValue("--null-color") ||
-        PrettyJSON.DEFAULT_VARIABLES.nullColor,
+        style.getPropertyValue("--number-color") || variables.numberColor,
+      nullColor: style.getPropertyValue("--null-color") || variables.nullColor,
       booleanColor:
-        style.getPropertyValue("--boolean-color") ||
-        PrettyJSON.DEFAULT_VARIABLES.booleanColor,
+        style.getPropertyValue("--boolean-color") || variables.booleanColor,
       commaColor:
-        style.getPropertyValue("--comma-color") ||
-        PrettyJSON.DEFAULT_VARIABLES.commaColor,
+        style.getPropertyValue("--comma-color") || variables.commaColor,
       ellipsisColor:
-        style.getPropertyValue("--ellipsis-color") ||
-        PrettyJSON.DEFAULT_VARIABLES.ellipsisColor,
-      indent:
-        style.getPropertyValue("--indent") ||
-        PrettyJSON.DEFAULT_VARIABLES.indent,
+        style.getPropertyValue("--ellipsis-color") || variables.ellipsisColor,
+      indent: style.getPropertyValue("--indent") || variables.indent,
     };
   }
 
@@ -103,20 +112,6 @@ class PrettyJSON extends HTMLElement {
       --ellipsis-color: ${variables.ellipsisColor};
 
       --indent: ${variables.indent};
-    }
-    @media (prefers-color-scheme: dark) {
-      :host {
-        --key-color: #f73d3d;
-        --arrow-color: #6c6c6c;
-        --brace-color: #0690bc;
-        --bracket-color: #0690bc;
-        --string-color: #21c521;
-        --number-color: #0078b3;
-        --null-color: #8c8888;
-        --boolean-color: #c737b3;
-        --comma-color: #848181;
-        --ellipsis-color: #c2c2c2;
-      }
     }
     button {
       border: none;

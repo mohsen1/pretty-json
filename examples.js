@@ -54,9 +54,9 @@ export const TEST_CASES = [
       [
         "style",
         `
-          --key-color: red;
+          --key-color: lime;
           --arrow-color: blue;
-          --brace-color: green;
+          --brace-color: magenta;
           --bracket-color: purple;
           --indent: 4rem;
         `
