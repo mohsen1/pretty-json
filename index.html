@@ -13,6 +13,10 @@
         const examplesTitle = document.createElement("h1");
         examplesTitle.textContent = "Examples";
         document.body.appendChild(examplesTitle);
+        const p = document.createElement("p");
+        p.textContent =
+          "The following examples are generated from the examples.js file. Each example shows a JSON object and the corresponding <pretty-json> element.";
+        document.body.appendChild(p);
 
         for (const testCase of TEST_CASES) {
           const container = document.createElement("div");
@@ -22,8 +26,15 @@
           title.textContent = testCase.name;
           container.appendChild(title);
 
+          if (testCase.description) {
+            const description = document.createElement("p");
+            description.textContent = testCase.description;
+            container.appendChild(description);
+          }
+
           const pre = document.createElement("pre");
           const json = JSON.stringify(testCase.value, null, 4);
+
           const attributes = testCase.attributes
             ? ` ${testCase.attributes
                 .map(([key, value]) => `${key}="${value}"`)
@@ -105,9 +116,10 @@
       .example {
         margin-bottom: 3rem;
       }
-
-      pre.shiki {
+      pre {
         padding: 0.5rem;
+      }
+      pre.shiki {
         white-space: pre-wrap;
         word-wrap: break-word;
       }

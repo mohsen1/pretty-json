@@ -30,34 +30,87 @@ class PrettyJSON extends HTMLElement {
     return ["expand", "key", "truncate-string"];
   }
 
-  static styles = `/* css */
-    :host {
-      --key-color: #cc0000;
-      --arrow-color: #737373;
-      --brace-color: #0030f0;
-      --bracket-color: #0030f0;
-      --string-color: #009900;
-      --number-color: #0000ff;
-      --null-color: #666666;
-      --boolean-color: #d23c91;
-      --comma-color: #666666;
-      --ellipsis-color: #666666;
+  // Default colors and styles
+  static DEFAULT_VARIABLES = {
+    light: {
+      keyColor: "#cc0000",
+      arrowColor: "#737373",
+      braceColor: "#0030f0",
+      bracketColor: "#0030f0",
+      stringColor: "#009900",
+      numberColor: "#0000ff",
+      nullColor: "#666666",
+      booleanColor: "#d23c91",
+      commaColor: "#666666",
+      ellipsisColor: "#666666",
+      indent: "2rem",
+    },
+    dark: {
+      keyColor: "#f73d3d",
+      arrowColor: "#6c6c6c",
+      braceColor: "#0690bc",
+      bracketColor: "#0690bc",
+      stringColor: "#21c521",
+      numberColor: "#0078b3",
+      nullColor: "#8c8888",
+      booleanColor: "#c737b3",
+      commaColor: "#848181",
+      ellipsisColor: "#c2c2c2",
+      indent: "2rem",
+    },
+  };
 
-      --indent: 2rem;
+  #getCssVariables() {
+    const prefersDarkMode = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    const variables = prefersDarkMode
+      ? PrettyJSON.DEFAULT_VARIABLES.dark
+      : PrettyJSON.DEFAULT_VARIABLES.light;
+    if (!this.shadowRoot) {
+      return variables;
     }
-    @media (prefers-color-scheme: dark) {
-      :host {
-        --key-color: #f73d3d;
-        --arrow-color: #6c6c6c;
-        --brace-color: #0690bc;
-        --bracket-color: #0690bc;
-        --string-color: #21c521;
-        --number-color: #0078b3;
-        --null-color: #8c8888;
-        --boolean-color: #c737b3;
-        --comma-color: #848181;
-        --ellipsis-color: #c2c2c2;
-      }
+    const style = getComputedStyle(this.shadowRoot.host);
+
+    return {
+      keyColor: style.getPropertyValue("--key-color") || variables.keyColor,
+      arrowColor:
+        style.getPropertyValue("--arrow-color") || variables.arrowColor,
+      braceColor:
+        style.getPropertyValue("--brace-color") || variables.braceColor,
+      bracketColor:
+        style.getPropertyValue("--bracket-color") || variables.bracketColor,
+      stringColor:
+        style.getPropertyValue("--string-color") || variables.stringColor,
+      numberColor:
+        style.getPropertyValue("--number-color") || variables.numberColor,
+      nullColor: style.getPropertyValue("--null-color") || variables.nullColor,
+      booleanColor:
+        style.getPropertyValue("--boolean-color") || variables.booleanColor,
+      commaColor:
+        style.getPropertyValue("--comma-color") || variables.commaColor,
+      ellipsisColor:
+        style.getPropertyValue("--ellipsis-color") || variables.ellipsisColor,
+      indent: style.getPropertyValue("--indent") || variables.indent,
+    };
+  }
+
+  get #styles() {
+    const variables = this.#getCssVariables();
+    return `/* css */
+    :host {
+      --key-color: ${variables.keyColor};
+      --arrow-color: ${variables.arrowColor};
+      --brace-color: ${variables.braceColor};
+      --bracket-color: ${variables.bracketColor};
+      --string-color: ${variables.stringColor};
+      --number-color: ${variables.numberColor};
+      --null-color: ${variables.nullColor};
+      --boolean-color: ${variables.booleanColor};
+      --comma-color: ${variables.commaColor};
+      --ellipsis-color: ${variables.ellipsisColor};
+
+      --indent: ${variables.indent};
     }
     button {
       border: none;
@@ -134,6 +187,7 @@ class PrettyJSON extends HTMLElement {
       display: inline-block;
     }
   `;
+  }
 
   constructor() {
     super();
@@ -414,7 +468,7 @@ class PrettyJSON extends HTMLElement {
 
     const styles = document.createElement("style");
     styles.setAttribute("data-pretty-json", "");
-    styles.textContent = PrettyJSON.styles;
+    styles.textContent = this.#styles;
     this.shadowRoot.appendChild(styles);
   }
 
