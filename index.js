@@ -337,6 +337,7 @@ class PrettyJSON extends HTMLElement {
     const isArray = Array.isArray(object);
     const objectKeyName = this.getAttribute("key");
     const expand = this.#expandAttributeValue;
+    const truncateString = this.#truncateStringAttributeValue; // Get the truncate string attribute value
 
     const container = this.#createContainer();
     container.classList.add(isArray ? "array" : "object");
@@ -395,6 +396,7 @@ class PrettyJSON extends HTMLElement {
       const prettyJsonElement = document.createElement("pretty-json");
       prettyJsonElement.textContent = JSON.stringify(value);
       prettyJsonElement.setAttribute("expand", String(expand - 1));
+      prettyJsonElement.setAttribute("truncate-string", String(truncateString)); // Set the truncate-string attribute
       prettyJsonElement.setAttribute("key", key);
       container.appendChild(prettyJsonElement);
     });
