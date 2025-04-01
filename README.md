@@ -90,8 +90,9 @@ pretty-json {
   --boolean-color: #d23c91;
   --comma-color: #666666;
   --ellipsis-color: #666666;
-
   --indent: 2rem;
+  --font-family: monospace;  
+  --font-size: 1rem;  
 }
 
 /* Also handle the dark mode */
@@ -107,6 +108,9 @@ pretty-json {
     --boolean-color: #c737b3;
     --comma-color: #848181;
     --ellipsis-color: #c2c2c2;
+    --indent: 2rem;
+    --font-family: monospace;
+    --font-size: 1rem;
   }
 }
 ```
