@@ -44,6 +44,8 @@ class PrettyJSON extends HTMLElement {
       commaColor: "#666666",
       ellipsisColor: "#666666",
       indent: "2rem",
+      fontSize: "1rem",
+      fontFamily: "monospace",
     },
     dark: {
       keyColor: "#f73d3d",
@@ -57,6 +59,8 @@ class PrettyJSON extends HTMLElement {
       commaColor: "#848181",
       ellipsisColor: "#c2c2c2",
       indent: "2rem",
+      fontSize: "1rem",
+      fontFamily: "monospace",
     },
   };
 
@@ -92,6 +96,8 @@ class PrettyJSON extends HTMLElement {
       ellipsisColor:
         style.getPropertyValue("--ellipsis-color") || variables.ellipsisColor,
       indent: style.getPropertyValue("--indent") || variables.indent,
+      fontSize: style.getPropertyValue("--font-size") || variables.fontSize,
+      fontFamily: style.getPropertyValue("--font-family") || variables.fontFamily,
     };
   }
 
@@ -109,20 +115,21 @@ class PrettyJSON extends HTMLElement {
       --boolean-color: ${variables.booleanColor};
       --comma-color: ${variables.commaColor};
       --ellipsis-color: ${variables.ellipsisColor};
-
       --indent: ${variables.indent};
+      --font-size: ${variables.fontSize};
+      --font-family: ${variables.fontFamily};
     }
     button {
       border: none;
       background: transparent;
       cursor: pointer;
       font-family: inherit;
-      font-size: 1rem;
+      font-size: var(--font-size);
       vertical-align: text-bottom;
     }
     .container {
-      font-family: monospace;
-      font-size: 1rem;
+      font-family: var(--font-family);
+      font-size: var(--font-size);
     }
     .key {
       color: var(--key-color);
