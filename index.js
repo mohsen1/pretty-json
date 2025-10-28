@@ -513,12 +513,12 @@ class PrettyJSON extends HTMLElement {
 
     // Try to extract JSON object or array from the content
     // This handles cases where there's trailing non-JSON content
-    const jsonMatch = trimmed.match(/^(\{[\s\S]*\}|\[[\s\S]*\])$/);
+    const jsonMatch = trimmed.match(/^(\{[\s\S]*\}|\[[\s\S]*\])/);
     if (jsonMatch) {
       return jsonMatch[1];
     }
 
-    // If no match, return the trimmed content and let JSON.parse handle the error
+    // For primitive values or if no match, return trimmed content
     return trimmed;
   }
 
