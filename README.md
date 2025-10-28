@@ -91,8 +91,8 @@ pretty-json {
   --comma-color: #666666;
   --ellipsis-color: #666666;
   --indent: 2rem;
-  --font-family: monospace;  
-  --font-size: 1rem;  
+  --font-family: monospace;
+  --font-size: 1rem;
 }
 
 /* Also handle the dark mode */

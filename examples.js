@@ -121,7 +121,7 @@ export const TEST_CASES = [
     description: "A long string that will be truncated.",
     value:
       "This long string is truncated. Clicking on ellipsis will expand it. lorem ipsum sit dolor amet consectetur adipis elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".repeat(
-        200
+        200,
       ),
   },
   {
@@ -130,7 +130,7 @@ export const TEST_CASES = [
     attributes: [["truncate-string", "700"]],
     value:
       "lorem ipsum sit dolor amet consectetur adipis elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".repeat(
-        200
+        200,
       ),
   },
 ];

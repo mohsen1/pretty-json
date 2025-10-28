@@ -66,7 +66,7 @@ class PrettyJSON extends HTMLElement {
 
   #getCssVariables() {
     const prefersDarkMode = window.matchMedia(
-      "(prefers-color-scheme: dark)"
+      "(prefers-color-scheme: dark)",
     ).matches;
     const variables = prefersDarkMode
       ? PrettyJSON.DEFAULT_VARIABLES.dark
@@ -97,7 +97,8 @@ class PrettyJSON extends HTMLElement {
         style.getPropertyValue("--ellipsis-color") || variables.ellipsisColor,
       indent: style.getPropertyValue("--indent") || variables.indent,
       fontSize: style.getPropertyValue("--font-size") || variables.fontSize,
-      fontFamily: style.getPropertyValue("--font-family") || variables.fontFamily,
+      fontFamily:
+        style.getPropertyValue("--font-family") || variables.fontFamily,
     };
   }
 
@@ -228,7 +229,7 @@ class PrettyJSON extends HTMLElement {
     this.#isExpanded = !this.#isExpanded;
     this.setAttribute(
       "expand",
-      this.#isExpanded ? String(this.#expandAttributeValue + 1) : "0"
+      this.#isExpanded ? String(this.#expandAttributeValue + 1) : "0",
     );
     this.#render();
   }
@@ -286,6 +287,9 @@ class PrettyJSON extends HTMLElement {
       } else {
         container.textContent = JSON.stringify(input);
       }
+    } else if (typeof input === "bigint") {
+      // BigInt values are rendered without quotes, just like numbers
+      container.textContent = String(input);
     } else {
       container.textContent = JSON.stringify(input);
     }
@@ -304,17 +308,17 @@ class PrettyJSON extends HTMLElement {
 
     ellipsis.addEventListener("click", () => {
       const expandedTimes = Number.parseInt(
-        container.dataset.expandedTimes ?? "1"
+        container.dataset.expandedTimes ?? "1",
       );
       container.dataset.expandedTimes = String(expandedTimes + 1);
       const expandedString = input.slice(
         0,
-        (expandedTimes + 1) * this.#truncateStringAttributeValue
+        (expandedTimes + 1) * this.#truncateStringAttributeValue,
       );
       const textChild = container.childNodes[1];
       container.replaceChild(
         document.createTextNode(expandedString),
-        textChild
+        textChild,
       );
     });
 
@@ -322,7 +326,7 @@ class PrettyJSON extends HTMLElement {
       '"',
       input.slice(0, this.#truncateStringAttributeValue),
       ellipsis,
-      '"'
+      '"',
     );
     return container;
   }
@@ -334,6 +338,20 @@ class PrettyJSON extends HTMLElement {
     const container = document.createElement("div");
     container.className = "container";
     return container;
+  }
+
+  /**
+   * Custom JSON stringify that handles BigInt values
+   * @param {any} value
+   * @returns {string}
+   */
+  #stringifyWithBigInt(value) {
+    return JSON.stringify(value, (key, val) => {
+      if (typeof val === "bigint") {
+        return val.toString();
+      }
+      return val;
+    });
   }
 
   /**
@@ -401,7 +419,7 @@ class PrettyJSON extends HTMLElement {
 
       // for objects and arrays we make a "container row"
       const prettyJsonElement = document.createElement("pretty-json");
-      prettyJsonElement.textContent = JSON.stringify(value);
+      prettyJsonElement.textContent = this.#stringifyWithBigInt(value);
       prettyJsonElement.setAttribute("expand", String(expand - 1));
       prettyJsonElement.setAttribute("truncate-string", String(truncateString)); // Set the truncate-string attribute
       prettyJsonElement.setAttribute("key", key);
@@ -424,7 +442,7 @@ class PrettyJSON extends HTMLElement {
     svg.setAttribute("class", "arrow");
     const polygon = document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "polygon"
+      "polygon",
     );
 
     polygon.setAttribute("class", "triangle");
@@ -468,7 +486,7 @@ class PrettyJSON extends HTMLElement {
     }
     this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(
-      this.#createChild(this.#input, this.#expandAttributeValue)
+      this.#createChild(this.#input, this.#expandAttributeValue),
     );
 
     if (this.shadowRoot.querySelector("[data-pretty-json]")) {
@@ -499,9 +517,103 @@ class PrettyJSON extends HTMLElement {
     }
   }
 
+  /**
+   * Custom JSON parser that preserves large integers as BigInt
+   * @param {string} text
+   * @returns {any}
+   */
+  #parseJSONWithBigInt(text) {
+    // First, replace large integers in the JSON string with a special marker
+    // that we can later convert to BigInt
+    let markerIndex = 0;
+    const bigIntMap = new Map();
+
+    // Match integers that are outside the safe integer range
+    const transformedText = text.replace(
+      /:\s*(-?\d{16,})\b/g,
+      (match, number) => {
+        // Check if this number is outside safe integer range
+        const bigIntValue = BigInt(number);
+        if (
+          bigIntValue > BigInt(Number.MAX_SAFE_INTEGER) ||
+          bigIntValue < BigInt(Number.MIN_SAFE_INTEGER)
+        ) {
+          const marker = `"__BIGINT_${markerIndex}__"`;
+          bigIntMap.set(marker, bigIntValue);
+          markerIndex++;
+          return `: ${marker}`;
+        }
+        return match;
+      },
+    );
+
+    // Also handle BigInts in arrays
+    const transformedText2 = transformedText.replace(
+      /\[\s*(-?\d{16,})\b/g,
+      (match, number) => {
+        const bigIntValue = BigInt(number);
+        if (
+          bigIntValue > BigInt(Number.MAX_SAFE_INTEGER) ||
+          bigIntValue < BigInt(Number.MIN_SAFE_INTEGER)
+        ) {
+          const marker = `"__BIGINT_${markerIndex}__"`;
+          bigIntMap.set(marker, bigIntValue);
+          markerIndex++;
+          return `[${marker}`;
+        }
+        return match;
+      },
+    );
+
+    // Also handle BigInts in arrays with commas
+    const transformedText3 = transformedText2.replace(
+      /,\s*(-?\d{16,})\b/g,
+      (match, number) => {
+        const bigIntValue = BigInt(number);
+        if (
+          bigIntValue > BigInt(Number.MAX_SAFE_INTEGER) ||
+          bigIntValue < BigInt(Number.MIN_SAFE_INTEGER)
+        ) {
+          const marker = `"__BIGINT_${markerIndex}__"`;
+          bigIntMap.set(marker, bigIntValue);
+          markerIndex++;
+          return `, ${marker}`;
+        }
+        return match;
+      },
+    );
+
+    // Parse the transformed JSON
+    const parsed = JSON.parse(transformedText3);
+
+    // Replace markers with actual BigInt values
+    const replaceBigInts = (obj) => {
+      if (
+        typeof obj === "string" &&
+        obj.startsWith("__BIGINT_") &&
+        obj.endsWith("__")
+      ) {
+        return bigIntMap.get(`"${obj}"`);
+      }
+      if (Array.isArray(obj)) {
+        return obj.map(replaceBigInts);
+      }
+      if (obj !== null && typeof obj === "object") {
+        const result = {};
+        for (const [key, value] of Object.entries(obj)) {
+          result[key] = replaceBigInts(value);
+        }
+        return result;
+      }
+      return obj;
+    };
+
+    return replaceBigInts(parsed);
+  }
+
   connectedCallback() {
     try {
-      this.#input = JSON.parse(this.textContent ?? "");
+      this.#input = this.#parseJSONWithBigInt(this.textContent ?? "");
     } catch (jsonParseError) {
       const message = `Error parsing JSON: ${jsonParseError instanceof Error ? jsonParseError.message : "Unknown error"}`;
       throw new PrettyJSONError(message);
