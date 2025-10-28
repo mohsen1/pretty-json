@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BigInt Support Test</title>
+    <script defer src="./index.js"></script>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+        max-width: 80ch;
+        margin: 2rem auto;
+        padding: 1rem;
+      }
+      .test-case {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .test-case h2 {
+        margin-top: 0;
+      }
+      .test-input {
+        background: #f5f5f5;
+        padding: 0.5rem;
+        border-radius: 4px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        margin: 0.5rem 0;
+      }
+      .pass {
+        color: green;
+        font-weight: bold;
+      }
+      .fail {
+        color: red;
+        font-weight: bold;
+      }
+      pretty-json {
+        display: block;
+        margin: 1rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>BigInt Support Test</h1>
+    <p>
+      This page tests the BigInt support in the pretty-json custom element.
+      Large integers (beyond JavaScript's safe integer range of ±2^53) should be
+      preserved exactly as written.
+    </p>
+
+    <div class="test-case">
+      <h2>Test 1: Simple BigInt</h2>
+      <div class="test-input">
+        {"bigInt": 3028151228586612802, "normal": 42}
+      </div>
+      <p>
+        Expected: bigInt should be 3028151228586612802 (not 3028151228586612700)
+      </p>
+      <pretty-json id="test1">
+        {"bigInt": 3028151228586612802, "normal": 42}
+      </pretty-json>
+      <div id="result1"></div>
+    </div>
+
+    <div class="test-case">
+      <h2>Test 2: Multiple BigInts</h2>
+      <div class="test-input">
+        {"bigInt1": 9007199254740992, "bigInt2": 3028151228586612802, "normal":
+        100}
+      </div>
+      <p>Expected: Both bigInt1 and bigInt2 should be preserved exactly</p>
+      <pretty-json id="test2">
+        {"bigInt1": 9007199254740992, "bigInt2": 3028151228586612802, "normal":
+        100}
+      </pretty-json>
+      <div id="result2"></div>
+    </div>
+
+    <div class="test-case">
+      <h2>Test 3: BigInt in Array</h2>
+      <div class="test-input">[3028151228586612802, 42, 9007199254740992]</div>
+      <p>Expected: Large integers in arrays should also be preserved</p>
+      <pretty-json id="test3">
+        [3028151228586612802, 42, 9007199254740992]
+      </pretty-json>
+      <div id="result3"></div>
+    </div>
+
+    <div class="test-case">
+      <h2>Test 4: Nested BigInt</h2>
+      <div class="test-input">{"nested": {"bigInt": 3028151228586612802}}</div>
+      <p>Expected: Nested big integers should be preserved</p>
+      <pretty-json id="test4">
+        {"nested": {"bigInt": 3028151228586612802}}
+      </pretty-json>
+      <div id="result4"></div>
+    </div>
+
+    <div class="test-case">
+      <h2>Test 5: Safe Integers</h2>
+      <div class="test-input">{"safeInt": 42, "maxSafe": 9007199254740991}</div>
+      <p>Expected: Safe integers should remain as regular numbers</p>
+      <pretty-json id="test5">
+        {"safeInt": 42, "maxSafe": 9007199254740991}
+      </pretty-json>
+      <div id="result5"></div>
+    </div>
+
+    <script>
+      // Wait for the custom elements to be defined
+      customElements.whenDefined("pretty-json").then(() => {
+        // Test 1
+        const test1Element = document.getElementById("test1");
+        const test1Text = test1Element.shadowRoot.textContent;
+        const test1Pass =
+          test1Text.includes("3028151228586612802") &&
+          !test1Text.includes("3028151228586612700");
+        document.getElementById("result1").innerHTML = test1Pass
+          ? '<span class="pass">✓ PASS</span>'
+          : '<span class="fail">✗ FAIL</span>';
+
+        // Test 2
+        const test2Element = document.getElementById("test2");
+        const test2Text = test2Element.shadowRoot.textContent;
+        const test2Pass =
+          test2Text.includes("9007199254740992") &&
+          test2Text.includes("3028151228586612802");
+        document.getElementById("result2").innerHTML = test2Pass
+          ? '<span class="pass">✓ PASS</span>'
+          : '<span class="fail">✗ FAIL</span>';
+
+        // Test 3
+        const test3Element = document.getElementById("test3");
+        const test3Text = test3Element.shadowRoot.textContent;
+        const test3Pass =
+          test3Text.includes("3028151228586612802") &&
+          test3Text.includes("9007199254740992");
+        document.getElementById("result3").innerHTML = test3Pass
+          ? '<span class="pass">✓ PASS</span>'
+          : '<span class="fail">✗ FAIL</span>';
+
+        // Test 4
+        const test4Element = document.getElementById("test4");
+        const test4Text = test4Element.shadowRoot.textContent;
+        const test4Pass = test4Text.includes("3028151228586612802");
+        document.getElementById("result4").innerHTML = test4Pass
+          ? '<span class="pass">✓ PASS</span>'
+          : '<span class="fail">✗ FAIL</span>';
+
+        // Test 5
+        const test5Element = document.getElementById("test5");
+        const test5Text = test5Element.shadowRoot.textContent;
+        const test5Pass =
+          test5Text.includes("42") && test5Text.includes("9007199254740991");
+        document.getElementById("result5").innerHTML = test5Pass
+          ? '<span class="pass">✓ PASS</span>'
+          : '<span class="fail">✗ FAIL</span>';
+      });
+    </script>
+  </body>
+</html>
