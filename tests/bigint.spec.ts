@@ -32,6 +32,7 @@ test.describe.serial("BigInt Support", () => {
 
     await page.evaluate(() => {
       const prettyJson = document.createElement("pretty-json");
+      // 9007199254740992 is MAX_SAFE_INTEGER + 1, testing the boundary
       prettyJson.textContent =
         '{"bigInt1": 9007199254740992, "bigInt2": 3028151228586612802, "normal": 100}';
       document.body.appendChild(prettyJson);
