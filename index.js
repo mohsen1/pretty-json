@@ -587,6 +587,10 @@ class PrettyJSON extends HTMLElement {
     const parsed = JSON.parse(transformedText3);
 
     // Replace markers with actual BigInt values
+    /**
+     * @param {any} obj
+     * @returns {any}
+     */
     const replaceBigInts = (obj) => {
       if (
         typeof obj === "string" &&
@@ -599,6 +603,7 @@ class PrettyJSON extends HTMLElement {
         return obj.map(replaceBigInts);
       }
       if (obj !== null && typeof obj === "object") {
+        /** @type {Record<string, any>} */
         const result = {};
         for (const [key, value] of Object.entries(obj)) {
           result[key] = replaceBigInts(value);
