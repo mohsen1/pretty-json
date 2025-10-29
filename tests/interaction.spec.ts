@@ -169,6 +169,12 @@ test.describe("Interaction", () => {
     const trailingExample = page.getByTestId("trailing-content-example");
     await trailingExample.scrollIntoViewIfNeeded();
 
+    // Ensure it renders correctly despite trailing content
+    await assertBodyWithScreenshot({
+      page,
+      name: "trailing-content-example.png",
+    });
+
     // Verify the content is actually parsed and rendered correctly
     const helloValue = await trailingExample.locator(".string").first();
     await expect(helloValue).toContainText("world");
