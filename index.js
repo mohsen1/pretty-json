@@ -66,7 +66,7 @@ class PrettyJSON extends HTMLElement {
 
   #getCssVariables() {
     const prefersDarkMode = window.matchMedia(
-      "(prefers-color-scheme: dark)"
+      "(prefers-color-scheme: dark)",
     ).matches;
     const variables = prefersDarkMode
       ? PrettyJSON.DEFAULT_VARIABLES.dark
@@ -97,7 +97,8 @@ class PrettyJSON extends HTMLElement {
         style.getPropertyValue("--ellipsis-color") || variables.ellipsisColor,
       indent: style.getPropertyValue("--indent") || variables.indent,
       fontSize: style.getPropertyValue("--font-size") || variables.fontSize,
-      fontFamily: style.getPropertyValue("--font-family") || variables.fontFamily,
+      fontFamily:
+        style.getPropertyValue("--font-family") || variables.fontFamily,
     };
   }
 
@@ -228,7 +229,7 @@ class PrettyJSON extends HTMLElement {
     this.#isExpanded = !this.#isExpanded;
     this.setAttribute(
       "expand",
-      this.#isExpanded ? String(this.#expandAttributeValue + 1) : "0"
+      this.#isExpanded ? String(this.#expandAttributeValue + 1) : "0",
     );
     this.#render();
   }
@@ -304,17 +305,17 @@ class PrettyJSON extends HTMLElement {
 
     ellipsis.addEventListener("click", () => {
       const expandedTimes = Number.parseInt(
-        container.dataset.expandedTimes ?? "1"
+        container.dataset.expandedTimes ?? "1",
       );
       container.dataset.expandedTimes = String(expandedTimes + 1);
       const expandedString = input.slice(
         0,
-        (expandedTimes + 1) * this.#truncateStringAttributeValue
+        (expandedTimes + 1) * this.#truncateStringAttributeValue,
       );
       const textChild = container.childNodes[1];
       container.replaceChild(
         document.createTextNode(expandedString),
-        textChild
+        textChild,
       );
     });
 
@@ -322,7 +323,7 @@ class PrettyJSON extends HTMLElement {
       '"',
       input.slice(0, this.#truncateStringAttributeValue),
       ellipsis,
-      '"'
+      '"',
     );
     return container;
   }
@@ -424,7 +425,7 @@ class PrettyJSON extends HTMLElement {
     svg.setAttribute("class", "arrow");
     const polygon = document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "polygon"
+      "polygon",
     );
 
     polygon.setAttribute("class", "triangle");
@@ -468,7 +469,7 @@ class PrettyJSON extends HTMLElement {
     }
     this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(
-      this.#createChild(this.#input, this.#expandAttributeValue)
+      this.#createChild(this.#input, this.#expandAttributeValue),
     );
 
     if (this.shadowRoot.querySelector("[data-pretty-json]")) {
@@ -499,9 +500,33 @@ class PrettyJSON extends HTMLElement {
     }
   }
 
+  /**
+   * Extract JSON content from text, handling trailing content
+   * @param {string} text
+   * @returns {string}
+   */
+  #extractJSON(text) {
+    const trimmed = text.trim();
+    if (!trimmed) {
+      return trimmed;
+    }
+
+    // Try to extract JSON object or array from the content
+    // This handles cases where there's trailing non-JSON content
+    const jsonMatch = trimmed.match(/^(\{[\s\S]*\}|\[[\s\S]*\])/);
+    if (jsonMatch) {
+      return jsonMatch[1];
+    }
+
+    // For primitive values or if no match, return trimmed content
+    return trimmed;
+  }
+
   connectedCallback() {
     try {
-      this.#input = JSON.parse(this.textContent ?? "");
+      const content = this.textContent ?? "";
+      const jsonContent = this.#extractJSON(content);
+      this.#input = JSON.parse(jsonContent);
     } catch (jsonParseError) {
       const message = `Error parsing JSON: ${jsonParseError instanceof Error ? jsonParseError.message : "Unknown error"}`;
       throw new PrettyJSONError(message);

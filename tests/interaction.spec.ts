@@ -152,4 +152,34 @@ test.describe("Interaction", () => {
       name: "long-string-example-expanded-more.png",
     });
   });
+
+  test("JSON with trailing content", async ({ page }) => {
+    await page.goto("/");
+
+    // create a <pretty-json> element with JSON that has trailing whitespace and content
+    await page.evaluate(() => {
+      const obj = { hello: "world", value: 42 };
+      const prettyJson = document.createElement("pretty-json");
+      prettyJson.setAttribute("data-testid", "trailing-content-example");
+      // Simulate trailing content that might come from copy-paste or other sources
+      prettyJson.textContent = JSON.stringify(obj) + "   \n\n  ";
+      document.body.appendChild(prettyJson);
+    });
+
+    const trailingExample = page.getByTestId("trailing-content-example");
+    await trailingExample.scrollIntoViewIfNeeded();
+
+    // Ensure it renders correctly despite trailing content
+    await assertBodyWithScreenshot({
+      page,
+      name: "trailing-content-example.png",
+    });
+
+    // Verify the content is actually parsed and rendered correctly
+    const helloValue = await trailingExample.locator(".string").first();
+    await expect(helloValue).toContainText("world");
+
+    const numberValue = await trailingExample.locator(".number").first();
+    await expect(numberValue).toContainText("42");
+  });
 });
