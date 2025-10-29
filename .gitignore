@@ -9,3 +9,6 @@ package-lock.json
 # Generated TypeScript declaration files (except types.d.ts)
 *.d.ts
 !types.d.ts
+# Generated test files
+tests/*.js
+playwright.config.js
