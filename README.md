@@ -91,8 +91,8 @@ pretty-json {
   --comma-color: #666666;
   --ellipsis-color: #666666;
   --indent: 2rem;
-  --font-family: monospace;  
-  --font-size: 1rem;  
+  --font-family: monospace;
+  --font-size: 1rem;
 }
 
 /* Also handle the dark mode */
@@ -117,12 +117,24 @@ pretty-json {
 
 ## Development
 
+The source code is in `index.src.js` and uses the `json-bigint` package to handle large integers. The distributed `index.js` is a bundled version created by esbuild.
+
 To run the development server:
 
 ```bash
 yarn install
 yarn start
 ```
+
+### Building
+
+To build the bundled `index.js` from source:
+
+```bash
+yarn build
+```
+
+The build is automatically run before publishing to npm.
 
 ### Running tests
 

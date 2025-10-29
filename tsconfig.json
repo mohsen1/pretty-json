@@ -1,5 +1,6 @@
 {
-  "exclude": ["dist"],
+  "include": ["index.src.js", "tests/**/*", "playwright.config.ts"],
+  "exclude": ["dist", "index.js", "examples.js"],
   "compilerOptions": {
     "target": "ES2021",
     "lib": ["DOM", "ES2023"],
@@ -7,8 +8,7 @@
     "module": "ES2022",
     "moduleResolution": "Node",
     "allowJs": true,
-    "declaration": true,
-    "emitDeclarationOnly": true,
+    "noEmit": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true
