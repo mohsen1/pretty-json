@@ -35,6 +35,7 @@ class PrettyJSON extends HTMLElement {
     light: {
       keyColor: "#cc0000",
       arrowColor: "#737373",
+      quoteColor: "#737373",
       braceColor: "#0030f0",
       bracketColor: "#0030f0",
       stringColor: "#009900",
@@ -50,6 +51,7 @@ class PrettyJSON extends HTMLElement {
     dark: {
       keyColor: "#f73d3d",
       arrowColor: "#6c6c6c",
+      quoteColor: "#6c6c6c",
       braceColor: "#0690bc",
       bracketColor: "#0690bc",
       stringColor: "#21c521",
@@ -80,6 +82,8 @@ class PrettyJSON extends HTMLElement {
       keyColor: style.getPropertyValue("--key-color") || variables.keyColor,
       arrowColor:
         style.getPropertyValue("--arrow-color") || variables.arrowColor,
+      quoteColor:
+        style.getPropertyValue("--quote-color") || variables.quoteColor,
       braceColor:
         style.getPropertyValue("--brace-color") || variables.braceColor,
       bracketColor:
@@ -107,6 +111,7 @@ class PrettyJSON extends HTMLElement {
     :host {
       --key-color: ${variables.keyColor};
       --arrow-color: ${variables.arrowColor};
+      --quote-color: ${variables.quoteColor};
       --brace-color: ${variables.braceColor};
       --bracket-color: ${variables.bracketColor};
       --string-color: ${variables.stringColor};
@@ -146,6 +151,16 @@ class PrettyJSON extends HTMLElement {
     .arrow .triangle {
       fill: var(--arrow-color);
     }
+	.value.string::before,
+	.key-name::before {
+	  color: var(--quote-color);
+	  content: '"';
+	}
+	.value.string::after,
+	.key-name::after {
+	  color: var(--quote-color);
+	  content: '"';
+	}
     .comma {
       color: var(--comma-color);
     }
@@ -175,9 +190,9 @@ class PrettyJSON extends HTMLElement {
     .ellipsis::after {
       content: "…";
     }
-    .string .ellipsis::after {
+    /* .string .ellipsis::after {
       color: var(--string-color);
-    }
+    } */
     .triangle {
       fill: black;
       stroke: black;
@@ -191,7 +206,7 @@ class PrettyJSON extends HTMLElement {
     }
     .row > div,
     .row > span {
-      display: inline-block;
+      display: inline;
     }
   `;
   }
@@ -284,10 +299,10 @@ class PrettyJSON extends HTMLElement {
       } else if (input.length > this.#truncateStringAttributeValue) {
         container.appendChild(this.#createTruncatedStringElement(input));
       } else {
-        container.textContent = JSON.stringify(input);
+        container.textContent = input;
       }
     } else {
-      container.textContent = JSON.stringify(input);
+      container.textContent = input;
     }
     return container;
   }
@@ -319,10 +334,8 @@ class PrettyJSON extends HTMLElement {
     });
 
     container.append(
-      '"',
       input.slice(0, this.#truncateStringAttributeValue),
       ellipsis,
-      '"'
     );
     return container;
   }
@@ -453,7 +466,7 @@ class PrettyJSON extends HTMLElement {
     }
     const keyName = document.createElement("span");
     keyName.className = "key-name";
-    keyName.textContent = JSON.stringify(key);
+    keyName.textContent = key;
     keyElement.appendChild(keyName);
     const colon = document.createElement("span");
     colon.className = "colon";
