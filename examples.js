@@ -38,15 +38,30 @@ export const TEST_CASES = [
   {
     name: "Without Brackets",
     description:
-      "An object with `hide-brackets` attribute set. This will hide the root brackets.",
+      "An object with `hide-brackets` attribute set. This will hide all the brackets.",
     value: {
       hello: "world",
       value: 42,
       enabled: true,
       extra: null,
+      list: [1, 2, 3, 4],
       nested: { key: "value" },
     },
     attributes: [["hide-brackets", ""]],
+  },
+  {
+    name: "Without Brackets on Root",
+    description:
+      "An object with `hide-brackets` attribute set to `only-root`. This will hide the root brackets.",
+    value: {
+      hello: "world",
+      value: 42,
+      enabled: true,
+      extra: null,
+      list: [1, 2, 3, 4],
+      nested: { key: "value" },
+    },
+    attributes: [["hide-brackets", "only-root"]],
   },
   {
     name: "Collapsed",

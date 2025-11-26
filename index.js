@@ -344,6 +344,7 @@ class PrettyJSON extends HTMLElement {
     const isArray = Array.isArray(object);
     const objectKeyName = this.getAttribute("key");
     let hideBrackets = this.getAttribute("hide-brackets") !== null;
+    let hideBracketsOnlyRoot = this.getAttribute("hide-brackets") == "only-root";
     const expand = this.#expandAttributeValue;
     const truncateString = this.#truncateStringAttributeValue; // Get the truncate string attribute value
 
@@ -378,7 +379,9 @@ class PrettyJSON extends HTMLElement {
       ellipsis.className = "ellipsis";
       container.appendChild(ellipsis);
       ellipsis.addEventListener("click", this.#toggle.bind(this));
-      container.appendChild(closingBrace);
+      if (!hideBrackets) {
+        container.appendChild(closingBrace);
+      }
       return container;
     }
 
@@ -409,6 +412,9 @@ class PrettyJSON extends HTMLElement {
       prettyJsonElement.setAttribute("expand", String(expand - 1));
       prettyJsonElement.setAttribute("truncate-string", String(truncateString)); // Set the truncate-string attribute
       prettyJsonElement.setAttribute("key", key);
+      if (hideBrackets && !hideBracketsOnlyRoot) {
+        prettyJsonElement.setAttribute("hide-brackets", "");
+      }
       container.appendChild(prettyJsonElement);
     });
 
