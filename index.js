@@ -27,7 +27,7 @@ class PrettyJSON extends HTMLElement {
   #isExpanded;
 
   static get observedAttributes() {
-    return ["expand", "key", "truncate-string"];
+    return ["expand", "key", "truncate-string", "hide-brackets"];
   }
 
   // Default colors and styles
@@ -343,6 +343,7 @@ class PrettyJSON extends HTMLElement {
   #createObjectOrArray(object) {
     const isArray = Array.isArray(object);
     const objectKeyName = this.getAttribute("key");
+    let hideBrackets = this.getAttribute("hide-brackets") !== null;
     const expand = this.#expandAttributeValue;
     const truncateString = this.#truncateStringAttributeValue; // Get the truncate string attribute value
 
@@ -363,7 +364,10 @@ class PrettyJSON extends HTMLElement {
     const openingBrace = document.createElement("span");
     openingBrace.className = "open brace";
     openingBrace.textContent = isArray ? "[" : "{";
-    container.appendChild(openingBrace);
+
+    if (!hideBrackets) {
+      container.appendChild(openingBrace);
+    }
 
     const closingBrace = document.createElement("span");
     closingBrace.className = "close brace";
@@ -408,7 +412,10 @@ class PrettyJSON extends HTMLElement {
       container.appendChild(prettyJsonElement);
     });
 
-    container.appendChild(closingBrace);
+    if (!hideBrackets) {
+      container.appendChild(closingBrace);
+    }
+
     return container;
   }
 

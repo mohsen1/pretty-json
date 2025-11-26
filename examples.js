@@ -36,6 +36,19 @@ export const TEST_CASES = [
     attributes: [["expand", "2"]],
   },
   {
+    name: "Without Brackets",
+    description:
+      "An object with `hide-brackets` attribute set. This will hide the root brackets.",
+    value: {
+      hello: "world",
+      value: 42,
+      enabled: true,
+      extra: null,
+      nested: { key: "value" },
+    },
+    attributes: [["hide-brackets", ""]],
+  },
+  {
     name: "Collapsed",
     description:
       "An object with `expand` attribute set to `0`. This will collapse the object.",
