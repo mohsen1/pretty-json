@@ -49,8 +49,10 @@ export const TEST_CASES = [
   },
   {
     name: "Themed",
-    description: "An object with custom styles applied.",
+    description:
+      "An object with custom styles applied. The nested object is expanded to show that custom colors apply to nested elements.",
     attributes: [
+      ["expand", "2"],
       [
         "style",
         `

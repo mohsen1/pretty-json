@@ -405,6 +405,11 @@ class PrettyJSON extends HTMLElement {
       prettyJsonElement.setAttribute("expand", String(expand - 1));
       prettyJsonElement.setAttribute("truncate-string", String(truncateString)); // Set the truncate-string attribute
       prettyJsonElement.setAttribute("key", key);
+      // Copy the style attribute to preserve color customization in nested elements
+      const styleAttribute = this.getAttribute("style");
+      if (styleAttribute) {
+        prettyJsonElement.setAttribute("style", styleAttribute);
+      }
       container.appendChild(prettyJsonElement);
     });
 
