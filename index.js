@@ -137,10 +137,10 @@ class PrettyJSON extends HTMLElement {
       padding: 0;
     }
     .key .arrow {
-      width: 1rem;
-      height: 0.75rem;
-      margin-left: -1.25rem;
-      padding-right: 0.25rem;
+      width: 1em;
+      height: 0.75em;
+      margin-left: -1.25em;
+      padding-right: 0.25em;
       vertical-align: baseline;
     }
     .arrow .triangle {
